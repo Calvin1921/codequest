@@ -44,7 +44,8 @@ export function CreatePostModal({ isModal = false }: CreatePostModalProps) {
       return result
     },
     {
-      message: null,
+      success: false,
+      error: '',
       errors: {},
     }
   )
@@ -77,8 +78,8 @@ export function CreatePostModal({ isModal = false }: CreatePostModalProps) {
             <p className="text-sm text-red-500">{state.errors.content}</p>
           )}
         </div>
-        {state?.message && !state.success && (
-          <p className="text-sm text-red-500">{state.message}</p>
+        {state?.error && !state.success && (
+          <p className="text-sm text-red-500">{state.error}</p>
         )}
       </div>
       {isModal ? (

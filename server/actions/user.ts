@@ -1,7 +1,7 @@
 'use server'
 
 import { z } from 'zod'
-import { db } from '@/server/db'
+import { prisma } from '@/server/db'
 import { auth, signOut } from '@/lib/auth'
 import { withRateLimit } from '@/server/ratelimit'
 import { revalidatePath } from 'next/cache'
@@ -48,7 +48,7 @@ export const updateProfile = withRateLimit(
         }
       }
 
-      await db.user.update({
+      await prisma.user.update({
         where: { id: session.user.id },
         data: updateData,
       })
@@ -83,7 +83,7 @@ export const deleteAccount = withRateLimit(
         }
       }
 
-      await db.user.delete({
+      await prisma.user.delete({
         where: { id: session.user.id },
       })
 

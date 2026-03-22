@@ -22,8 +22,9 @@ function SubmitButton() {
 
 export default function RegisterPage() {
   const [state, formAction] = useActionState(registerUser, {
-    message: null,
-    errors: {},
+    message: '',
+    errors: {} as Record<string, string[] | undefined>,
+    success: false,
   })
 
   return (

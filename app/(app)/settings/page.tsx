@@ -42,13 +42,13 @@ function DeleteButton() {
 
 export default function SettingsPage() {
   const [profileState, profileAction] = useActionState(updateProfile, {
-    message: null,
-    errors: {},
+    message: '',
+    errors: {} as Record<string, string[] | undefined>,
   })
-  
+
   const [deleteState, deleteAction] = useActionState(deleteAccount, {
-    message: null,
-    errors: {},
+    message: '',
+    errors: {} as Record<string, string[] | undefined>,
   })
 
   return (
