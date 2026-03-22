@@ -12,7 +12,8 @@ const loginSchema = z.object({
   password: z.string().min(6),
 })
 
-const providers: Parameters<typeof NextAuth>[0]["providers"] = [
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const providers: any[] = [
   Credentials({
     name: "credentials",
     credentials: {
