@@ -1,0 +1,75 @@
+'use server'
+
+import { z } from 'zod'
+import bcrypt from 'bcryptjs'
+import { db } from '@/server/db'
+import { withRateLimit } from '@/server/ratelimit'
+import { withCSRFProtection } from '@/server/csrf'
+import { signIn } from '@/lib/auth'
+
+const registerSchema = z.object({
+  name: z.string().min(2, 'Name must be at least 2 characters'),
+  email: z.string().email('Invalid email address'),
+  password: z.string().min(8, 'Password must be at least 8 characters'),
+})
+
+export const registerUser = withRateLimit(
+  withCSRFProtection(async (prevState: any, formData: FormData) => {
+    try {
+      const validatedFields = registerSchema.safeParse({
+        name: formData.get('name'),
+        email: formData.get('email'),
+        password: formData.get('password'),
+      })
+
+      if (!validatedFields.success) {
+        return {
+          errors: validatedFields.error.flatten().fieldErrors,
+          message: 'Invalid fields. Please check your input.',
+        }
+      }
+
+      const { name, email, password } = validatedFields.data
+
+      const existingUser = await db.user.findUnique({
+        where: { email },
+      })
+
+      if (existingUser) {
+        return {
+          errors: { email: ['Email already registered'] },
+          message: 'An account with this email already exists.',
+        }
+      }
+
+      const hashedPassword = await bcrypt.hash(password, 10)
+
+      await db.user.create({
+        data: {
+          name,
+          email,
+          password: hashedPassword,
+        },
+      })
+
+      await signIn('credentials', {
+        email,
+        password,
+        redirect: false,
+      })
+
+      return {
+        message: null,
+        errors: {},
+        success: true,
+      }
+    } catch (error) {
+      console.error('Registration error:', error)
+      return {
+        message: 'Something went wrong. Please try again.',
+        errors: {},
+      }
+    }
+  }),
+  'auth'
+)
