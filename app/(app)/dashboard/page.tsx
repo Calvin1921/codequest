@@ -2,13 +2,20 @@ import { auth } from "@/lib/auth"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Suspense } from "react"
 import prisma from "@/server/db"
+import Link from "next/link"
 
 async function StatsCards() {
   const session = await auth()
-  
-  const [postCount, recentPosts] = await Promise.all([
+
+  const [postCount, publishedCount, draftCount, recentPosts] = await Promise.all([
     prisma.post.count({
       where: { authorId: session?.user?.id }
+    }),
+    prisma.post.count({
+      where: { authorId: session?.user?.id, published: true }
+    }),
+    prisma.post.count({
+      where: { authorId: session?.user?.id, published: false }
     }),
     prisma.post.findMany({
       where: { authorId: session?.user?.id },
@@ -17,13 +24,34 @@ async function StatsCards() {
     })
   ])
 
+  if (postCount === 0) {
+    return (
+      <Card className="flex flex-col items-center justify-center py-12">
+        <CardHeader className="text-center">
+          <CardTitle className="text-xl">No posts yet</CardTitle>
+          <CardDescription>
+            Get started by creating your first post.
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <Link
+            href="/posts/new"
+            className="inline-flex items-center justify-center rounded-md bg-primary px-6 py-3 text-sm font-medium text-primary-foreground shadow hover:bg-primary/90 transition-colors"
+          >
+            Create your first post
+          </Link>
+        </CardContent>
+      </Card>
+    )
+  }
+
   return (
     <>
       <div className="grid gap-4 md:grid-cols-3">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">
-              Total Posts
+              📝 Total Posts
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -33,32 +61,32 @@ async function StatsCards() {
             </p>
           </CardContent>
         </Card>
-        
+
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">
-              Published
+              ✅ Published
             </CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
-              {recentPosts.filter(p => p.published).length}
+              {publishedCount}
             </div>
             <p className="text-xs text-muted-foreground">
               Live posts
             </p>
           </CardContent>
         </Card>
-        
+
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">
-              Drafts
+              📋 Drafts
             </CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
-              {recentPosts.filter(p => !p.published).length}
+              {draftCount}
             </div>
             <p className="text-xs text-muted-foreground">
               Unpublished posts
@@ -75,14 +103,10 @@ async function StatsCards() {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          {recentPosts.length === 0 ? (
-            <p className="text-sm text-muted-foreground">
-              No posts yet. Create your first post!
-            </p>
-          ) : (
-            <div className="space-y-2">
-              {recentPosts.map((post) => (
-                <div key={post.id} className="flex items-center justify-between p-2 hover:bg-muted rounded">
+          <div className="space-y-2">
+            {recentPosts.map((post) => (
+              <Link key={post.id} href="/posts" className="block">
+                <div className="flex items-center justify-between p-2 hover:bg-muted rounded">
                   <div>
                     <p className="font-medium">{post.title}</p>
                     <p className="text-sm text-muted-foreground">
@@ -90,9 +114,9 @@ async function StatsCards() {
                     </p>
                   </div>
                 </div>
-              ))}
-            </div>
-          )}
+              </Link>
+            ))}
+          </div>
         </CardContent>
       </Card>
     </>
@@ -121,6 +145,10 @@ export default async function DashboardPage() {
               </Card>
             ))}
           </div>
+          <Card className="mt-6">
+            <CardHeader className="h-16 animate-pulse bg-muted" />
+            <CardContent className="h-40 animate-pulse bg-muted mt-2" />
+          </Card>
         </div>
       }>
         <StatsCards />
