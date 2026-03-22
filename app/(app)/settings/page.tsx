@@ -43,13 +43,13 @@ function DeleteButton() {
 export default function SettingsPage() {
   const [profileState, profileAction] = useActionState(updateProfile, {
     message: '',
-    errors: {} as Record<string, string[] | undefined>,
-  })
+    errors: {},
+  } satisfies import('@/server/actions/user').ProfileState)
 
   const [deleteState, deleteAction] = useActionState(deleteAccount, {
     message: '',
-    errors: {} as Record<string, string[] | undefined>,
-  })
+    errors: {},
+  } satisfies import('@/server/actions/user').ProfileState)
 
   return (
     <div className="container mx-auto py-8 max-w-4xl">

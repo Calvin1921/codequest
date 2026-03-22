@@ -9,7 +9,9 @@ import Link from "next/link"
 import { signIn } from "next-auth/react"
 import { useRouter } from "next/navigation"
 
-async function loginAction(prevState: any, formData: FormData) {
+type LoginState = { error?: string; success?: boolean }
+
+async function loginAction(prevState: LoginState | null, formData: FormData): Promise<LoginState> {
   const email = formData.get("email") as string
   const password = formData.get("password") as string
 
@@ -25,7 +27,7 @@ async function loginAction(prevState: any, formData: FormData) {
     }
 
     return { success: true }
-  } catch (error) {
+  } catch {
     return { error: "An error occurred during login" }
   }
 }
@@ -87,7 +89,7 @@ export default function LoginPage() {
               {isPending ? "Signing in..." : "Sign In"}
             </Button>
             <div className="text-center text-sm text-muted-foreground">
-              Don't have an account?{" "}
+              Don&apos;t have an account?{" "}
               <Link href="/register" className="text-primary hover:underline">
                 Sign up
               </Link>

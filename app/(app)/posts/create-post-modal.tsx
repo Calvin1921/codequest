@@ -1,6 +1,6 @@
 'use client'
 
-import { useActionState } from 'react'
+import { useActionState, useEffect } from 'react'
 import { useFormStatus } from 'react-dom'
 import { useRouter } from 'next/navigation'
 import { createPost } from '@/server/actions/posts'
@@ -34,21 +34,19 @@ interface CreatePostModalProps {
 
 export function CreatePostModal({ isModal = false }: CreatePostModalProps) {
   const router = useRouter()
-  const [state, formAction] = useActionState(
-    async (prevState: any, formData: FormData) => {
-      const result = await createPost(prevState, formData)
-      if (result.success) {
-        router.push('/posts')
-        router.refresh()
-      }
-      return result
-    },
-    {
-      success: false,
-      error: '',
-      errors: {},
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const [state, formAction] = useActionState(createPost as any, {
+    success: false,
+    error: '',
+    errors: {} as { title?: string[]; content?: string[]; published?: string[] },
+  })
+
+  useEffect(() => {
+    if (state?.success) {
+      router.push('/posts')
+      router.refresh()
     }
-  )
+  }, [state?.success, router])
 
   const form = (
     <form action={formAction}>

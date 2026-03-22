@@ -74,11 +74,9 @@ if (process.env.NODE_ENV === 'production') {
     silent: true,
     org: process.env.SENTRY_ORG,
     project: process.env.SENTRY_PROJECT,
-  }, {
     widenClientFileUpload: true,
-    transpileClientSDK: true,
     tunnelRoute: "/monitoring",
-    hideSourceMaps: true,
+    sourcemaps: { deleteSourcemapsAfterUpload: true },
     disableLogger: true,
   });
 }

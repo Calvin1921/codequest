@@ -6,6 +6,16 @@ import { auth, signOut } from '@/lib/auth'
 import { withRateLimit } from '@/server/ratelimit'
 import { revalidatePath } from 'next/cache'
 
+export type ProfileState = {
+  message: string
+  errors: {
+    name?: string[]
+    email?: string[]
+    bio?: string[]
+  }
+  success?: boolean
+}
+
 const profileSchema = z.object({
   name: z.string().min(2, 'Name must be at least 2 characters').optional(),
   email: z.string().email('Invalid email address').optional(),
@@ -13,7 +23,7 @@ const profileSchema = z.object({
 })
 
 export const updateProfile = withRateLimit(
-  async (prevState: any, formData: FormData) => {
+  async (prevState: ProfileState, formData: FormData): Promise<ProfileState> => {
     try {
       const session = await auth()
 
@@ -72,7 +82,7 @@ export const updateProfile = withRateLimit(
 )
 
 export const deleteAccount = withRateLimit(
-  async (prevState: any, formData: FormData) => {
+  async (prevState: ProfileState, formData: FormData): Promise<ProfileState> => {
     try {
       const session = await auth()
 

@@ -5,7 +5,7 @@ import { useFormStatus } from 'react-dom'
 
 interface OptimisticFormProps<T> {
   initialData: T
-  action: (prevState: any, formData: FormData) => Promise<any>
+  action: (prevState: Record<string, unknown>, formData: FormData) => Promise<Record<string, unknown>>
   optimisticUpdate: (current: T, formData: FormData) => T
   children: (data: T, isPending: boolean) => React.ReactNode
 }
@@ -18,7 +18,7 @@ export function OptimisticForm<T>({
 }: OptimisticFormProps<T>) {
   const [optimisticData, setOptimisticData] = useOptimistic(initialData)
   const [isPending, startTransition] = useTransition()
-  const [state, formAction] = useActionState(action, { errors: {} })
+  const [state, formAction] = useActionState(action, { errors: {} as Record<string, string[]> })
 
   const handleSubmit = (formData: FormData) => {
     startTransition(() => {
@@ -30,15 +30,15 @@ export function OptimisticForm<T>({
   return (
     <form action={handleSubmit}>
       {children(optimisticData, isPending)}
-      {state?.errors && Object.keys(state.errors).length > 0 && (
+      {state?.errors && Object.keys(state.errors).length > 0 ? (
         <div className="mt-4 p-4 bg-red-50 border border-red-200 rounded">
           {Object.entries(state.errors).map(([key, value]) => (
             <p key={key} className="text-sm text-red-600">
-              {key}: {value}
+              {key}: {String(value)}
             </p>
           ))}
         </div>
-      )}
+      ) : null}
     </form>
   )
 }

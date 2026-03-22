@@ -31,7 +31,7 @@ export function useActionStateExtended<T>(
         setOptimisticData(options.optimisticUpdate(optimisticData, formData))
       }
       
-      formAction(formData).then((result) => {
+      ;(formAction(formData) as any)?.then?.((result: any) => {
         if (result.success && result.data && options.onSuccess) {
           options.onSuccess(result.data)
         } else if (result.error && options.onError) {

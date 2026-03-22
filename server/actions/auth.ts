@@ -6,6 +6,16 @@ import { prisma } from '@/server/db'
 import { withRateLimit } from '@/server/ratelimit'
 import { signIn } from '@/lib/auth'
 
+export type RegisterState = {
+  message: string
+  errors: {
+    name?: string[]
+    email?: string[]
+    password?: string[]
+  }
+  success?: boolean
+}
+
 const registerSchema = z.object({
   name: z.string().min(2, 'Name must be at least 2 characters'),
   email: z.string().email('Invalid email address'),
@@ -13,7 +23,7 @@ const registerSchema = z.object({
 })
 
 export const registerUser = withRateLimit(
-  async (prevState: any, formData: FormData) => {
+  async (prevState: RegisterState, formData: FormData): Promise<RegisterState> => {
     try {
       const validatedFields = registerSchema.safeParse({
         name: formData.get('name'),
@@ -58,7 +68,7 @@ export const registerUser = withRateLimit(
       })
 
       return {
-        message: null,
+        message: '',
         errors: {},
         success: true,
       }

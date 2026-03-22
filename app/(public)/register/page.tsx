@@ -23,9 +23,9 @@ function SubmitButton() {
 export default function RegisterPage() {
   const [state, formAction] = useActionState(registerUser, {
     message: '',
-    errors: {} as Record<string, string[] | undefined>,
+    errors: {},
     success: false,
-  })
+  } satisfies import('@/server/actions/auth').RegisterState)
 
   return (
     <div className="container flex h-screen w-screen flex-col items-center justify-center">
