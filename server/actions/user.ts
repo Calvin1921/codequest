@@ -2,7 +2,7 @@
 
 import { z } from 'zod'
 import { prisma } from '@/server/db'
-import { auth, signOut } from '@/lib/auth'
+import { auth } from '@/lib/auth'
 import { withRateLimit } from '@/server/ratelimit'
 import { revalidatePath } from 'next/cache'
 
@@ -97,10 +97,8 @@ export const deleteAccount = withRateLimit(
         where: { id: session.user.id },
       })
 
-      await signOut({ redirect: true, redirectTo: '/' })
-
       return {
-        message: 'Account deleted successfully',
+        message: 'Account deleted',
         errors: {},
         success: true,
       }
