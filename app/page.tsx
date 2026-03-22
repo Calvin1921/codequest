@@ -4,13 +4,17 @@ import Link from "next/link"
 
 export default function HomePage() {
   return (
-    <div className="space-y-8">
-      <section className="text-center py-12">
-        <h1 className="text-4xl font-bold mb-4">
-          Welcome to Next.js 15 + React 19
+    <div className="space-y-16">
+      <section className="text-center py-20">
+        <h1 className="text-5xl font-extrabold tracking-tight text-foreground mb-6">
+          Master Coding Interviews,
+          <br />
+          Level Up Your Career
         </h1>
-        <p className="text-xl text-muted-foreground mb-8">
-          A production-ready application with Server Components, Server Actions, and more
+        <p className="text-xl text-muted-foreground max-w-2xl mx-auto mb-10">
+          A gamified platform for senior engineers to sharpen interview skills.
+          Tackle real-world coding challenges, get instant AI-powered feedback,
+          and track your progress with XP, streaks, and leaderboards.
         </p>
         <div className="flex gap-4 justify-center">
           <Button size="lg" asChild>
@@ -22,49 +26,60 @@ export default function HomePage() {
         </div>
       </section>
 
-      <div className="grid md:grid-cols-3 gap-6">
-        <Card>
-          <CardHeader>
-            <CardTitle>React Server Components</CardTitle>
-            <CardDescription>
-              Server-first architecture for optimal performance
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <p className="text-sm text-muted-foreground">
-              Components render on the server by default, sending minimal JavaScript to the client
-            </p>
-          </CardContent>
-        </Card>
+      <section>
+        <h2 className="text-2xl font-bold text-center text-foreground mb-8">
+          Everything you need to ace the interview
+        </h2>
+        <div className="grid md:grid-cols-3 gap-6">
+          <Card>
+            <CardHeader>
+              <CardTitle>Live Coding Challenges</CardTitle>
+              <CardDescription>
+                Built-in Monaco Editor for a real IDE experience
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <p className="text-sm text-muted-foreground">
+                Solve algorithms, data structures, and system design problems in
+                a full-featured code editor with syntax highlighting, autocomplete,
+                and multi-language support.
+              </p>
+            </CardContent>
+          </Card>
 
-        <Card>
-          <CardHeader>
-            <CardTitle>Server Actions</CardTitle>
-            <CardDescription>
-              Mutations without API routes
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <p className="text-sm text-muted-foreground">
-              Direct server functions that can be called from client components
-            </p>
-          </CardContent>
-        </Card>
+          <Card>
+            <CardHeader>
+              <CardTitle>AI-Powered Feedback</CardTitle>
+              <CardDescription>
+                Instant analysis from Claude
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <p className="text-sm text-muted-foreground">
+                Get detailed feedback on code quality, time complexity, edge cases,
+                and alternative approaches — like having a senior engineer review
+                every solution.
+              </p>
+            </CardContent>
+          </Card>
 
-        <Card>
-          <CardHeader>
-            <CardTitle>Suspense Streaming</CardTitle>
-            <CardDescription>
-              Progressive UI loading
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <p className="text-sm text-muted-foreground">
-              Stream parts of your UI as they become ready for better perceived performance
-            </p>
-          </CardContent>
-        </Card>
-      </div>
+          <Card>
+            <CardHeader>
+              <CardTitle>Gamified Learning</CardTitle>
+              <CardDescription>
+                XP, streaks, and leaderboards
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <p className="text-sm text-muted-foreground">
+                Earn experience points for each challenge, maintain daily streaks
+                to build consistency, and compete on the leaderboard to stay
+                motivated throughout your prep.
+              </p>
+            </CardContent>
+          </Card>
+        </div>
+      </section>
     </div>
   )
 }
