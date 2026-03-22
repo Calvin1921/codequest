@@ -1,6 +1,7 @@
 'use client'
 
 import { useOptimistic, useTransition } from 'react'
+import { toast } from 'sonner'
 import { deletePost } from '@/server/actions/posts'
 import { Button } from '@/components/ui/button'
 import {
@@ -22,7 +23,13 @@ export function PostActions({ postId }: { postId: string }) {
   const handleDelete = () => {
     startTransition(async () => {
       setOptimisticDeleted(true)
-      await deletePost(postId)
+      const result = await deletePost(postId)
+      if (result.success) {
+        toast.success('Post deleted')
+      } else {
+        setOptimisticDeleted(false)
+        toast.error(result.error ?? 'Failed to delete post')
+      }
     })
   }
 
