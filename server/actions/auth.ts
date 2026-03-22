@@ -4,7 +4,6 @@ import { z } from 'zod'
 import bcrypt from 'bcryptjs'
 import { db } from '@/server/db'
 import { withRateLimit } from '@/server/ratelimit'
-import { withCSRFProtection } from '@/server/csrf'
 import { signIn } from '@/lib/auth'
 
 const registerSchema = z.object({
@@ -14,7 +13,7 @@ const registerSchema = z.object({
 })
 
 export const registerUser = withRateLimit(
-  withCSRFProtection(async (prevState: any, formData: FormData) => {
+  async (prevState: any, formData: FormData) => {
     try {
       const validatedFields = registerSchema.safeParse({
         name: formData.get('name'),
@@ -70,6 +69,6 @@ export const registerUser = withRateLimit(
         errors: {},
       }
     }
-  }),
+  },
   'auth'
 )
