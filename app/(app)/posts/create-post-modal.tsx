@@ -3,6 +3,7 @@
 import { useActionState, useEffect } from 'react'
 import { useFormStatus } from 'react-dom'
 import { useRouter } from 'next/navigation'
+import { toast } from 'sonner'
 import { createPost } from '@/server/actions/posts'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -43,6 +44,7 @@ export function CreatePostModal({ isModal = false }: CreatePostModalProps) {
 
   useEffect(() => {
     if (state?.success) {
+      toast.success('Post created!')
       router.push('/posts')
       router.refresh()
     }
