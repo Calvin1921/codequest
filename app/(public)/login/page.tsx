@@ -1,6 +1,6 @@
 'use client'
 
-import { useActionState } from "react"
+import { useActionState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
@@ -34,9 +34,11 @@ export default function LoginPage() {
   const router = useRouter()
   const [state, formAction, isPending] = useActionState(loginAction, null)
 
-  if (state?.success) {
-    router.push("/dashboard")
-  }
+  useEffect(() => {
+    if (state?.success) {
+      router.push("/dashboard")
+    }
+  }, [state?.success, router])
 
   return (
     <div className="max-w-md mx-auto">
@@ -50,7 +52,7 @@ export default function LoginPage() {
         <form action={formAction}>
           <CardContent className="space-y-4">
             {state?.error && (
-              <div className="text-sm text-red-500">
+              <div role="alert" className="text-sm text-red-500">
                 {state.error}
               </div>
             )}
