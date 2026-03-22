@@ -11,7 +11,7 @@ const createPostSchema = z.object({
   published: z.boolean().default(false),
 })
 
-export async function createPost(formData: FormData) {
+export async function createPost(prevState: any, formData: FormData) {
   const session = await auth()
   
   if (!session?.user?.id) {

@@ -1,6 +1,6 @@
 import { Suspense } from 'react'
 import Link from 'next/link'
-import { db } from '@/server/db'
+import { prisma as db } from '@/server/db'
 import { auth } from '@/lib/auth'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
@@ -10,7 +10,7 @@ async function PostsList() {
   const session = await auth()
   const posts = await db.post.findMany({
     where: {
-      userId: session?.user?.id,
+      authorId: session?.user?.id,
     },
     orderBy: {
       createdAt: 'desc',
