@@ -1,8 +1,9 @@
 'use client'
 
-import { useActionState } from 'react'
+import { useActionState, useEffect } from 'react'
 import { useFormStatus } from 'react-dom'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 import { signIn } from 'next-auth/react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -12,7 +13,7 @@ import { registerUser } from '@/server/actions/auth'
 
 function SubmitButton() {
   const { pending } = useFormStatus()
-  
+
   return (
     <Button type="submit" className="w-full" disabled={pending}>
       {pending ? 'Creating account...' : 'Create account'}
@@ -21,11 +22,18 @@ function SubmitButton() {
 }
 
 export default function RegisterPage() {
+  const router = useRouter()
   const [state, formAction] = useActionState(registerUser, {
     message: '',
     errors: {},
     success: false,
   } satisfies import('@/server/actions/auth').RegisterState)
+
+  useEffect(() => {
+    if (state?.success) {
+      router.push('/dashboard')
+    }
+  }, [state?.success, router])
 
   return (
     <div className="container flex h-screen w-screen flex-col items-center justify-center">
@@ -38,13 +46,13 @@ export default function RegisterPage() {
         </CardHeader>
         <CardContent className="grid gap-4">
           <div className="grid grid-cols-2 gap-6">
-            <Button 
+            <Button
               variant="outline"
               onClick={() => signIn('github', { callbackUrl: '/dashboard' })}
             >
               GitHub
             </Button>
-            <Button 
+            <Button
               variant="outline"
               onClick={() => signIn('google', { callbackUrl: '/dashboard' })}
             >
