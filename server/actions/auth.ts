@@ -2,7 +2,7 @@
 
 import { z } from 'zod'
 import bcrypt from 'bcryptjs'
-import { db } from '@/server/db'
+import { prisma } from '@/server/db'
 import { withRateLimit } from '@/server/ratelimit'
 import { signIn } from '@/lib/auth'
 
@@ -30,7 +30,7 @@ export const registerUser = withRateLimit(
 
       const { name, email, password } = validatedFields.data
 
-      const existingUser = await db.user.findUnique({
+      const existingUser = await prisma.user.findUnique({
         where: { email },
       })
 
@@ -43,7 +43,7 @@ export const registerUser = withRateLimit(
 
       const hashedPassword = await bcrypt.hash(password, 10)
 
-      await db.user.create({
+      await prisma.user.create({
         data: {
           name,
           email,

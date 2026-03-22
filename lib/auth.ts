@@ -1,12 +1,11 @@
 import NextAuth from "next-auth"
 import { PrismaAdapter } from "@auth/prisma-adapter"
-import { PrismaClient } from "@prisma/client"
 import GitHub from "next-auth/providers/github"
 import Google from "next-auth/providers/google"
 import Credentials from "next-auth/providers/credentials"
 import { z } from "zod"
-
-const prisma = new PrismaClient()
+import bcrypt from "bcryptjs"
+import { prisma } from "@/server/db"
 
 const loginSchema = z.object({
   email: z.string().email(),
@@ -41,18 +40,32 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       },
       async authorize(credentials) {
         const parsed = loginSchema.safeParse(credentials)
-        
+
         if (!parsed.success) {
           return null
         }
 
-        // In production, verify password hash
-        // For demo, just check if user exists
         const user = await prisma.user.findUnique({
           where: { email: parsed.data.email },
+          select: {
+            id: true,
+            email: true,
+            name: true,
+            image: true,
+            password: true,
+          },
         })
 
-        if (!user) {
+        if (!user || !user.password) {
+          return null
+        }
+
+        const isValid = await bcrypt.compare(
+          parsed.data.password,
+          user.password
+        )
+
+        if (!isValid) {
           return null
         }
 
