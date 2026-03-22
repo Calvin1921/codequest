@@ -4,7 +4,6 @@ import { z } from 'zod'
 import { db } from '@/server/db'
 import { auth, signOut } from '@/lib/auth'
 import { withRateLimit } from '@/server/ratelimit'
-import { withCSRFProtection } from '@/server/csrf'
 import { revalidatePath } from 'next/cache'
 
 const profileSchema = z.object({
@@ -14,10 +13,10 @@ const profileSchema = z.object({
 })
 
 export const updateProfile = withRateLimit(
-  withCSRFProtection(async (prevState: any, formData: FormData) => {
+  async (prevState: any, formData: FormData) => {
     try {
       const session = await auth()
-      
+
       if (!session?.user?.id) {
         return {
           message: 'You must be logged in to update your profile',
@@ -68,15 +67,15 @@ export const updateProfile = withRateLimit(
         errors: {},
       }
     }
-  }),
+  },
   'api'
 )
 
 export const deleteAccount = withRateLimit(
-  withCSRFProtection(async (prevState: any, formData: FormData) => {
+  async (prevState: any, formData: FormData) => {
     try {
       const session = await auth()
-      
+
       if (!session?.user?.id) {
         return {
           message: 'You must be logged in to delete your account',
@@ -102,6 +101,6 @@ export const deleteAccount = withRateLimit(
         errors: {},
       }
     }
-  }),
+  },
   'auth'
 )
