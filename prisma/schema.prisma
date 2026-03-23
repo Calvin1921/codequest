@@ -19,12 +19,15 @@ model User {
   image         String?
   password      String?
   bio           String?
+  totalXp       Int       @default(0)
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
 
   accounts Account[]
   sessions Session[]
   posts    Post[]
+  progress UserProgress[]
+  streak   Streak?
 
   @@index([email])
 }
@@ -82,4 +85,62 @@ model Post {
   @@index([authorId])
   @@index([published])
   @@index([createdAt])
+}
+
+// CodeQuest models
+model Challenge {
+  id               String   @id @default(cuid())
+  title            String
+  description      String
+  problemStatement String
+  difficulty       String   // "easy" | "medium" | "hard"
+  category         String   // "javascript" | "typescript" | "algorithms" | "react"
+  starterCode      String
+  solutionCode     String
+  testCases        String   // JSON string: [{ input, expected, description }]
+  hints            String   // JSON string: ["hint1", "hint2", "hint3"]
+  xpReward         Int      @default(100)
+  timeEstimate     Int      @default(300)
+  isPublished      Boolean  @default(true)
+  order            Int      @default(0)
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  progress UserProgress[]
+
+  @@index([difficulty])
+  @@index([category])
+}
+
+model UserProgress {
+  id            String    @id @default(cuid())
+  userId        String
+  challengeId   String
+  status        String    @default("not_started")
+  submittedCode String?
+  attempts      Int       @default(0)
+  xpEarned      Int       @default(0)
+  completedAt   DateTime?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  challenge Challenge @relation(fields: [challengeId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, challengeId])
+  @@index([userId])
+  @@index([challengeId])
+}
+
+model Streak {
+  id             String   @id @default(cuid())
+  userId         String   @unique
+  currentStreak  Int      @default(0)
+  longestStreak  Int      @default(0)
+  lastActiveDate String?  // ISO date string "2026-03-23"
+  freezesLeft    Int      @default(1)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
