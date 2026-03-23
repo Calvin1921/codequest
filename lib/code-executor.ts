@@ -112,7 +112,8 @@ export function executeCode(
             const results = [null];
             for (let i = 1; i < ${JSON.stringify(operations)}.length; i++) {
               const [method, ...args] = ${JSON.stringify(operations)}[i];
-              results.push(instance[method](...args));
+              const ret = instance[method](...args);
+              results.push(ret === undefined ? null : ret);
             }
             return results;
           })()
