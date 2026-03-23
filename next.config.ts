@@ -1,11 +1,9 @@
 import type { NextConfig } from "next";
-import { withSentryConfig } from "@sentry/nextjs";
 
 const nextConfig: NextConfig = {
   reactStrictMode: true,
-  
+
   experimental: {
-    // Server Actions configuration
     serverActions: {
       bodySizeLimit: '2mb',
     },
@@ -60,25 +58,4 @@ const nextConfig: NextConfig = {
   },
 };
 
-// Bundle analyzer configuration
-const withBundleAnalyzer = require('@next/bundle-analyzer')({
-  enabled: process.env.ANALYZE === 'true',
-});
-
-// Apply bundle analyzer
-let config = withBundleAnalyzer(nextConfig);
-
-// Apply Sentry configuration in production
-if (process.env.NODE_ENV === 'production') {
-  config = withSentryConfig(config, {
-    silent: true,
-    org: process.env.SENTRY_ORG,
-    project: process.env.SENTRY_PROJECT,
-    widenClientFileUpload: true,
-    tunnelRoute: "/monitoring",
-    sourcemaps: { deleteSourcemapsAfterUpload: true },
-    disableLogger: true,
-  });
-}
-
-export default config;
+export default nextConfig;
