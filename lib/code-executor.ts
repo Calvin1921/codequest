@@ -131,7 +131,7 @@ export function executeCode(
         )
 
         result.actual = callScript.runInContext(context, {
-    
+          timeout: EXECUTION_TIMEOUT_MS,
         })
         result.passed = deepEqual(result.actual, testCase.expected)
       } else {
