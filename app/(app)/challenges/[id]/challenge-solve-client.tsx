@@ -1,7 +1,15 @@
 'use client'
 
-import { useState, useCallback, useTransition, useMemo } from 'react'
+import {
+  useState,
+  useCallback,
+  useTransition,
+  useMemo,
+  useRef,
+  useEffect,
+} from 'react'
 import { useRouter } from 'next/navigation'
+import Link from 'next/link'
 import type { ExecutionResult } from '@/lib/types'
 import { submitSolution, saveDraft } from '@/server/actions/progress'
 import type { SubmitResult } from '@/server/actions/progress'
@@ -59,6 +67,55 @@ export default function ChallengeSolveClient({
   const isSolved = progress?.status === 'completed'
 
   const [resultsCollapsed, setResultsCollapsed] = useState(false)
+
+  // ---- Resizable panels ----
+  const containerRef = useRef<HTMLDivElement>(null)
+  const [splitPercent, setSplitPercent] = useState(() => {
+    if (typeof window !== 'undefined') {
+      const stored = localStorage.getItem('cq-split')
+      if (stored) {
+        const val = parseInt(stored, 10)
+        if (val >= 25 && val <= 60) return val
+      }
+    }
+    return 35
+  })
+
+  const splitPercentRef = useRef(splitPercent)
+  useEffect(() => {
+    splitPercentRef.current = splitPercent
+  }, [splitPercent])
+
+  const handleDragStart = useCallback((e: React.MouseEvent) => {
+    e.preventDefault()
+    const startX = e.clientX
+    const startPercent = splitPercentRef.current
+    const container = containerRef.current
+    if (!container) return
+
+    // Prevent text selection during drag
+    document.body.style.cursor = 'col-resize'
+    document.body.style.userSelect = 'none'
+
+    const handleDrag = (moveEvent: MouseEvent) => {
+      const containerWidth = container.offsetWidth
+      const delta = moveEvent.clientX - startX
+      const deltaPercent = (delta / containerWidth) * 100
+      const newPercent = Math.min(60, Math.max(25, startPercent + deltaPercent))
+      setSplitPercent(Math.round(newPercent))
+    }
+
+    const handleDragEnd = () => {
+      document.removeEventListener('mousemove', handleDrag)
+      document.removeEventListener('mouseup', handleDragEnd)
+      document.body.style.cursor = ''
+      document.body.style.userSelect = ''
+      localStorage.setItem('cq-split', String(splitPercentRef.current))
+    }
+
+    document.addEventListener('mousemove', handleDrag)
+    document.addEventListener('mouseup', handleDragEnd)
+  }, [])
 
   let hints: string[] = []
   try {
@@ -136,6 +193,30 @@ export default function ChallengeSolveClient({
         />
       )}
 
+      {/* Breadcrumb */}
+      <div className="flex items-center gap-2 border-b border-neutral-800 bg-neutral-950/80 px-4 py-2 text-sm">
+        <Link
+          href="/challenges"
+          className="text-neutral-500 transition-colors hover:text-lime-400"
+        >
+          Challenges
+        </Link>
+        <svg
+          className="size-3.5 text-neutral-600"
+          viewBox="0 0 20 20"
+          fill="currentColor"
+        >
+          <path
+            fillRule="evenodd"
+            d="M7.21 14.77a.75.75 0 01.02-1.06L11.168 10 7.23 6.29a.75.75 0 111.04-1.08l4.5 4.25a.75.75 0 010 1.08l-4.5 4.25a.75.75 0 01-1.06-.02z"
+            clipRule="evenodd"
+          />
+        </svg>
+        <span className="font-medium text-neutral-200 truncate">
+          {challenge.title}
+        </span>
+      </div>
+
       {/* Mobile tab switcher */}
       <div className="flex border-b border-neutral-800 lg:hidden">
         <button
@@ -162,14 +243,18 @@ export default function ChallengeSolveClient({
         </button>
       </div>
 
-      <div className="flex min-h-[calc(100vh-4rem)] flex-col lg:h-[calc(100vh-4rem)] lg:flex-row">
+      <div
+        ref={containerRef}
+        className="flex flex-col lg:h-[calc(100vh-4rem-37px)] lg:flex-row"
+      >
         {/* ===== Problem panel (left) ===== */}
         <section
-          className={`flex w-full shrink-0 flex-col overflow-y-auto border-b border-neutral-800 lg:w-[35%] lg:border-b-0 lg:border-r ${
+          style={{ width: `${splitPercent}%` }}
+          className={`flex w-full shrink-0 flex-col overflow-y-auto border-b border-neutral-800 lg:w-auto lg:border-b-0 lg:border-r ${
             mobileTab === 'editor' ? 'hidden lg:flex' : 'flex'
           }`}
         >
-          <div className="flex flex-col gap-6 p-6 lg:p-8">
+          <div className="flex flex-1 flex-col gap-6 p-6 pt-6 lg:p-8 lg:pt-6">
             {/* Header */}
             <div className="space-y-3">
               <div className="flex flex-wrap items-center gap-2">
@@ -294,13 +379,21 @@ export default function ChallengeSolveClient({
           </div>
         </section>
 
+        {/* ===== Draggable divider ===== */}
+        <div
+          onMouseDown={handleDragStart}
+          className="hidden lg:flex w-1 cursor-col-resize items-center justify-center bg-neutral-800 hover:bg-lime-500/50 transition-colors group shrink-0"
+        >
+          <div className="w-0.5 h-8 rounded-full bg-neutral-600 group-hover:bg-lime-400 transition-colors" />
+        </div>
+
         {/* ===== Editor panel (right) ===== */}
         <section
-          className={`flex w-full flex-col lg:min-h-0 lg:w-[65%] ${
+          className={`flex min-w-0 flex-1 flex-col lg:min-h-0 ${
             mobileTab === 'problem' ? 'hidden lg:flex' : 'flex'
           }`}
         >
-          <div className="min-h-[300px] flex-1">
+          <div className="min-h-[300px] flex-1 lg:min-h-0">
             <ChallengeEditor
               starterCode={challenge.starterCode}
               language="javascript"
@@ -349,7 +442,7 @@ export default function ChallengeSolveClient({
             </button>
 
             {!resultsCollapsed && (
-              <div className="max-h-[30vh] overflow-y-auto px-5 pb-4">
+              <div className="max-h-[30vh] overflow-y-auto px-4 pb-4">
                 {executionError && (
                   <div className="mb-3 rounded-lg border border-red-500/20 bg-red-500/5 px-4 py-3 text-sm">
                     <p className="font-semibold text-red-400">Error</p>

@@ -60,7 +60,7 @@ export function ChallengeEditor({
 
   return (
     <div className="flex h-full flex-col">
-      <div className="min-h-0 flex-1 overflow-hidden rounded-t-lg border border-neutral-800">
+      <div className="min-h-0 flex-1 overflow-hidden border-b border-neutral-800">
         <Editor
           height="100%"
           language={language}
@@ -89,7 +89,7 @@ export function ChallengeEditor({
         />
       </div>
 
-      <div className="flex items-center justify-between rounded-b-lg border border-t-0 border-neutral-800 bg-neutral-900/80 px-3 py-2">
+      <div className="flex items-center justify-between bg-neutral-900/80 px-3 py-2">
         <div className="flex items-center gap-2">
           <button
             type="button"
