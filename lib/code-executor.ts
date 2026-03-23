@@ -79,15 +79,17 @@ export function executeCode(
 
     try {
       // Create a fresh sandboxed context for each test case
-      const sandbox: Record<string, unknown> = {
-        console: { log: () => {}, error: () => {}, warn: () => {} },
-      }
-      // vm.createContext provides isolated builtins automatically
-
-      const context = vm.createContext(sandbox)
-
-      // Run user code to define the function(s) in the sandbox
-      script.runInContext(context, { timeout: EXECUTION_TIMEOUT_MS })
+      // We use vm.createContext({}) which provides isolated builtins.
+      // We add a no-op console to prevent user code from accessing host stdout.
+      // We do NOT pass host constructors (Array, Object, etc.) to prevent prototype chain escapes.
+      // Create context with globalThis to ensure built-in constructors work correctly.
+      // Using globalThis gives the context proper access to Set, Map, Array, etc.
+      // We override console to prevent host stdout access and we do NOT pass
+      // Function or process references to prevent sandbox escape.
+      // Create completely isolated context — no host objects at all
+      // Define console inside the context to avoid cross-realm contamination
+      const context = vm.createContext({})
+      vm.runInContext('var console = { log: function(){}, error: function(){}, warn: function(){} }', context)
 
       // Determine which function to call
       const fnName = functionName || detectFunctionName(userCode)
@@ -98,10 +100,10 @@ export function executeCode(
         continue
       }
 
-      const fn = sandbox[fnName]
-
       // Handle class-based challenges (input is array of method calls)
-      if (typeof fn === 'function' && isClassChallenge(testCase)) {
+      if (isClassChallenge(testCase)) {
+        // Run definition first for class challenges
+        script.runInContext(context, { timeout: EXECUTION_TIMEOUT_MS })
         const operations = testCase.input as unknown as [string, ...unknown[]][]
         const expectedResults = testCase.expected as unknown[]
 
@@ -125,18 +127,18 @@ export function executeCode(
           timeout: EXECUTION_TIMEOUT_MS,
         })
         result.passed = deepEqual(result.actual, expectedResults)
-      } else if (typeof fn === 'function') {
-        // Standard function call
-        const callScript = new vm.Script(
-          `${fnName}(${testCase.input.map((arg) => JSON.stringify(arg)).join(', ')})`,
-        )
-
-        result.actual = callScript.runInContext(context, {
-          timeout: EXECUTION_TIMEOUT_MS,
-        })
-        result.passed = deepEqual(result.actual, testCase.expected)
       } else {
-        result.error = `"${fnName}" is not defined as a function`
+        // Standard function call
+        // Run definition + call in a single vm.runInContext to avoid cross-realm issues
+        // (pre-compiled Script + separate runInContext causes cross-realm string
+        //  comparison failures in Set/Map due to different string primitives)
+        const argsJson = JSON.stringify(testCase.input)
+        const fullCode = `${userCode}\n;(function(){var __r=${fnName}.apply(null,JSON.parse(${JSON.stringify(argsJson)}));return JSON.stringify(__r);})()`
+        const serialized = vm.runInContext(fullCode, context, {
+          timeout: EXECUTION_TIMEOUT_MS,
+        }) as string | null
+        result.actual = serialized != null ? JSON.parse(serialized) : serialized
+        result.passed = deepEqual(result.actual, testCase.expected)
       }
     } catch (err) {
       if (err instanceof Error) {
