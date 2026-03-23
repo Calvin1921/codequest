@@ -1,6 +1,6 @@
 'use server'
 
-import prisma from '@/server/db'
+import { prisma } from '@/server/db'
 
 // NOTE: All streak dates use UTC (via toISOString). This means a user's "day"
 // boundary depends on their relationship to UTC, not their local timezone.

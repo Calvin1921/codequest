@@ -1,6 +1,7 @@
 import { auth } from "@/lib/auth"
 import { Suspense } from "react"
-import prisma from "@/server/db"
+import { prisma } from "@/server/db"
+import type { Difficulty } from "@/lib/types"
 import Link from "next/link"
 import {
   Zap,
@@ -31,8 +32,8 @@ function timeAgo(date: Date): string {
 // ---------------------------------------------------------------------------
 // Difficulty badge colors (neon arcade style)
 // ---------------------------------------------------------------------------
-function difficultyColor(difficulty: string) {
-  switch (difficulty.toLowerCase()) {
+function difficultyColor(difficulty: Difficulty) {
+  switch (difficulty) {
     case "easy":
       return "bg-emerald-500/15 text-emerald-400 border border-emerald-500/30"
     case "medium":
@@ -160,7 +161,7 @@ async function ChallengeDashboard() {
   let nextChallenge: {
     id: string
     title: string
-    difficulty: string
+    difficulty: Difficulty
     xpReward: number
     category: string
   } | null = null
@@ -181,7 +182,7 @@ async function ChallengeDashboard() {
           select: { totalXp: true },
         })
       : null
-    totalXp = ((user as Record<string, unknown>)?.totalXp as number) ?? 0
+    totalXp = user?.totalXp ?? 0
 
     const [completed, total, streak, next, activity] = await Promise.all([
       userId
@@ -237,10 +238,9 @@ async function ChallengeDashboard() {
 
     solvedCount = completed
     totalChallenges = total
-    currentStreak =
-      ((streak as Record<string, unknown>)?.currentStreak as number) ?? 0
-    nextChallenge = next
-    recentActivity = activity as typeof recentActivity
+    currentStreak = streak?.currentStreak ?? 0
+    nextChallenge = next ? { ...next, difficulty: next.difficulty as Difficulty } : null
+    recentActivity = activity
   } catch {
     challengeDataAvailable = false
   }

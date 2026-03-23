@@ -1,6 +1,7 @@
 import Link from "next/link"
 import { DifficultyBadge } from "@/components/difficulty-badge"
 import { cn } from "@/lib/utils"
+import type { Difficulty } from "@/lib/types"
 
 type ChallengeStatus = "completed" | "in-progress" | "locked" | "available"
 
@@ -8,14 +9,14 @@ interface ChallengeCardProps {
   id: string
   title: string
   description: string
-  difficulty: "easy" | "medium" | "hard"
+  difficulty: Difficulty
   category: string
   xp: number
   timeEstimate?: number
   status: ChallengeStatus
 }
 
-const difficultyGlow: Record<string, string> = {
+const difficultyGlow: Record<Difficulty, string> = {
   easy: "hover:shadow-[0_0_20px_rgba(34,197,94,0.15)]",
   medium: "hover:shadow-[0_0_20px_rgba(245,158,11,0.15)]",
   hard: "hover:shadow-[0_0_20px_rgba(244,63,94,0.15)]",
