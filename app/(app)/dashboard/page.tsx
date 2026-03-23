@@ -562,7 +562,7 @@ export default async function DashboardPage() {
     session?.user?.name || session?.user?.email?.split("@")[0] || "there"
 
   return (
-    <div>
+    <div className="mx-auto max-w-7xl">
       <div className="mb-8">
         <h1 className="text-2xl font-bold text-zinc-100 sm:text-3xl">
           Welcome back,{" "}

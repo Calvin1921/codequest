@@ -16,12 +16,14 @@ export function SidebarWrapper({
   mobileHeader,
   mobileTabBar,
 }: SidebarWrapperProps) {
-  const [collapsed, setCollapsed] = useState(() => {
-    if (typeof window !== 'undefined') {
-      return localStorage.getItem('cq-sidebar-collapsed') === 'true'
-    }
-    return false
-  })
+  const [collapsed, setCollapsed] = useState(false)
+  const [mounted, setMounted] = useState(false)
+
+  // Hydrate collapsed state from localStorage after mount
+  useEffect(() => {
+    setCollapsed(localStorage.getItem('cq-sidebar-collapsed') === 'true')
+    setMounted(true)
+  }, [])
 
   const toggle = useCallback(() => {
     setCollapsed((prev) => {
