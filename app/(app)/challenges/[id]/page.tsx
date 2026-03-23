@@ -31,7 +31,7 @@ export default async function ChallengeDetailPage({
   const userProgress = challenge.progress[0] ?? null
 
   return (
-    <div>
+    <div className="-mx-4 -mt-4 sm:-mx-6 lg:-mx-8">
       <ChallengeSolveClient
         challenge={{
           id: challenge.id,

@@ -2,13 +2,6 @@
 
 import { useState, useCallback, useTransition } from 'react'
 import { useRouter } from 'next/navigation'
-import { Button } from '@/components/ui/button'
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card'
 import type { ExecutionResult } from '@/lib/types'
 import { submitSolution, saveDraft } from '@/server/actions/progress'
 import type { SubmitResult } from '@/server/actions/progress'
@@ -30,8 +23,8 @@ export interface ChallengeSolveProps {
     difficulty: string
     category: string
     starterCode: string
-    testCases: string // JSON string
-    hints: string // JSON string
+    testCases: string
+    hints: string
     xpReward: number
   }
   progress?: {
@@ -52,20 +45,17 @@ export default function ChallengeSolveClient({
 }: ChallengeSolveProps) {
   const router = useRouter()
 
-  // ---- State ----
   const [executionResult, setExecutionResult] =
     useState<ExecutionResult | null>(null)
   const [executionError, setExecutionError] = useState<string | null>(null)
   const [showCelebration, setShowCelebration] = useState(false)
   const [celebrationXp, setCelebrationXp] = useState(0)
   const [hintsRevealed, setHintsRevealed] = useState(0)
-  const [showResults, setShowResults] = useState(true)
 
   const [isSubmitting, startSubmitTransition] = useTransition()
 
   const isSolved = progress?.status === 'completed'
 
-  // Parse hints safely
   let hints: string[] = []
   try {
     hints = JSON.parse(challenge.hints) as string[]
@@ -85,7 +75,6 @@ export default function ChallengeSolveClient({
             code,
           )
           setExecutionResult(result.execution)
-          setShowResults(true)
 
           if (result.execution.passed && !result.alreadyCompleted) {
             setCelebrationXp(result.xpAwarded)
@@ -122,7 +111,6 @@ export default function ChallengeSolveClient({
 
   return (
     <>
-      {/* Celebration overlay */}
       {showCelebration && (
         <SolveCelebration
           xpAwarded={celebrationXp}
@@ -131,128 +119,128 @@ export default function ChallengeSolveClient({
         />
       )}
 
-      <div className="flex flex-col gap-4 lg:flex-row lg:gap-6">
-        {/* ===== Problem panel (left / top on mobile) ===== */}
-        <section className="w-full shrink-0 space-y-4 lg:w-2/5">
-          {/* Header */}
-          <div className="space-y-2">
-            <div className="flex flex-wrap items-center gap-2">
-              <h1 className="text-2xl font-bold">{challenge.title}</h1>
-              <DifficultyBadge
-                difficulty={
-                  challenge.difficulty as 'easy' | 'medium' | 'hard'
-                }
-              />
-              <span className="rounded-full bg-muted px-2.5 py-0.5 text-xs font-medium capitalize text-muted-foreground">
-                {challenge.category}
-              </span>
+      <div className="flex h-[calc(100vh-4rem)] flex-col gap-0 lg:flex-row">
+        {/* ===== Problem panel (left) ===== */}
+        <section className="flex w-full shrink-0 flex-col overflow-y-auto border-b border-neutral-800 lg:w-2/5 lg:border-b-0 lg:border-r">
+          <div className="flex flex-col gap-5 p-5">
+            {/* Header */}
+            <div className="space-y-3">
+              <div className="flex flex-wrap items-center gap-2">
+                <h1 className="text-xl font-bold text-white">
+                  {challenge.title}
+                </h1>
+                <DifficultyBadge
+                  difficulty={
+                    challenge.difficulty as 'easy' | 'medium' | 'hard'
+                  }
+                />
+              </div>
+
+              <div className="flex items-center gap-3">
+                <span className="rounded-md bg-neutral-800 px-2 py-0.5 text-[11px] font-medium capitalize text-neutral-400">
+                  {challenge.category}
+                </span>
+                <span className="font-mono text-sm font-bold tabular-nums text-lime-500">
+                  {challenge.xpReward} XP
+                </span>
+              </div>
+
+              {isSolved && (
+                <div className="flex items-center gap-2 rounded-lg border border-green-500/30 bg-green-500/10 px-3 py-2 text-sm font-medium text-green-400">
+                  <svg
+                    className="size-4"
+                    viewBox="0 0 20 20"
+                    fill="currentColor"
+                  >
+                    <path
+                      fillRule="evenodd"
+                      d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.857-9.809a.75.75 0 00-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 10-1.06 1.061l2.5 2.5a.75.75 0 001.137-.089l4-5.5z"
+                      clipRule="evenodd"
+                    />
+                  </svg>
+                  Solved — {progress?.xpEarned ?? 0} XP earned
+                </div>
+              )}
             </div>
 
-            {isSolved && (
-              <div className="rounded-md border border-green-500/30 bg-green-500/10 px-3 py-2 text-sm font-medium text-green-700 dark:text-green-400">
-                Solved — {progress?.xpEarned ?? 0} XP earned
-              </div>
-            )}
-          </div>
-
-          {/* Problem statement */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-base">Problem</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="prose prose-sm max-w-none whitespace-pre-wrap dark:prose-invert">
+            {/* Problem statement */}
+            <div className="rounded-lg border border-neutral-800 bg-neutral-900/50 p-4">
+              <h4 className="mb-3 text-xs font-semibold uppercase tracking-wider text-neutral-500">
+                Problem
+              </h4>
+              <div className="prose prose-sm prose-invert max-w-none whitespace-pre-wrap text-neutral-300">
                 {challenge.problemStatement}
               </div>
-            </CardContent>
-          </Card>
+            </div>
 
-          {/* Hints */}
-          {hints.length > 0 && (
-            <Card>
-              <CardHeader className="flex flex-row items-center justify-between">
-                <CardTitle className="text-base">
-                  Hints ({hintsRevealed}/{hints.length})
-                </CardTitle>
-                {hintsRevealed < hints.length && (
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={revealNextHint}
-                  >
-                    Reveal hint
-                  </Button>
-                )}
-              </CardHeader>
-              {hintsRevealed > 0 && (
-                <CardContent>
+            {/* Hints */}
+            {hints.length > 0 && (
+              <div className="rounded-lg border border-neutral-800 bg-neutral-900/50 p-4">
+                <div className="mb-3 flex items-center justify-between">
+                  <h4 className="text-xs font-semibold uppercase tracking-wider text-neutral-500">
+                    Hints ({hintsRevealed}/{hints.length})
+                  </h4>
+                  {hintsRevealed < hints.length && (
+                    <button
+                      type="button"
+                      onClick={revealNextHint}
+                      className="rounded-md border border-neutral-700 px-2.5 py-1 text-xs font-medium text-neutral-400 transition-colors hover:bg-neutral-800 hover:text-neutral-200"
+                    >
+                      Reveal hint
+                    </button>
+                  )}
+                </div>
+                {hintsRevealed > 0 && (
                   <ol className="list-decimal space-y-2 pl-5 text-sm">
                     {hints.slice(0, hintsRevealed).map((hint, i) => (
-                      <li key={i} className="text-muted-foreground">
+                      <li key={i} className="text-neutral-400">
                         {hint}
                       </li>
                     ))}
                   </ol>
-                </CardContent>
-              )}
-            </Card>
-          )}
+                )}
+              </div>
+            )}
 
-          {/* XP reward info */}
-          <p className="text-xs text-muted-foreground">
-            Base reward: {challenge.xpReward} XP — bonus XP for fewer attempts
-          </p>
+            <p className="text-xs text-neutral-600">
+              Base reward: {challenge.xpReward} XP — bonus XP for fewer
+              attempts
+            </p>
+          </div>
         </section>
 
-        {/* ===== Editor panel (right / bottom on mobile) ===== */}
-        <section className="flex w-full flex-col gap-4 lg:w-3/5">
-          {/* Editor — ChallengeEditor owns its own code state and action bar */}
-          <Card className="overflow-hidden">
-            <CardContent className="p-4">
-              <ChallengeEditor
-                starterCode={challenge.starterCode}
-                language="javascript"
-                onSubmit={handleSubmit}
-                onSave={handleSave}
-                isSubmitting={isSubmitting}
-                previousCode={progress?.submittedCode ?? undefined}
-              />
-            </CardContent>
-          </Card>
+        {/* ===== Editor panel (right) ===== */}
+        <section className="flex w-full flex-col lg:w-3/5">
+          <div className="min-h-0 flex-1">
+            <ChallengeEditor
+              starterCode={challenge.starterCode}
+              language="javascript"
+              onSubmit={handleSubmit}
+              onSave={handleSave}
+              isSubmitting={isSubmitting}
+              previousCode={progress?.submittedCode ?? undefined}
+            />
+          </div>
 
-          {/* Execution error banner */}
           {executionError && (
-            <div className="rounded-md border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-700 dark:text-red-400">
-              <p className="font-medium">Error</p>
-              <p className="mt-1 font-mono text-xs">{executionError}</p>
+            <div className="border-t border-red-500/20 bg-red-500/5 px-4 py-3 text-sm">
+              <p className="font-semibold text-red-400">Error</p>
+              <p className="mt-1 font-mono text-xs text-red-300">
+                {executionError}
+              </p>
             </div>
           )}
 
-          {/* Test results */}
           {executionResult && executionResult.results.length > 0 && (
-            <Card>
-              <CardHeader className="flex flex-row items-center justify-between">
-                <CardTitle className="text-base">Test Results</CardTitle>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => setShowResults((v) => !v)}
-                >
-                  {showResults ? 'Hide' : 'Show'}
-                </Button>
-              </CardHeader>
-              {showResults && (
-                <CardContent>
-                  <TestResults
-                    results={executionResult.results}
-                    passed={executionResult.passed}
-                    totalTests={executionResult.totalTests}
-                    passedTests={executionResult.passedTests}
-                    xpAwarded={celebrationXp}
-                  />
-                </CardContent>
-              )}
-            </Card>
+            <div className="max-h-[40%] overflow-y-auto border-t border-neutral-800 bg-neutral-950 p-4">
+              <TestResults
+                results={executionResult.results}
+                passed={executionResult.passed}
+                totalTests={executionResult.totalTests}
+                passedTests={executionResult.passedTests}
+                xpAwarded={celebrationXp}
+              />
+            </div>
           )}
         </section>
       </div>
