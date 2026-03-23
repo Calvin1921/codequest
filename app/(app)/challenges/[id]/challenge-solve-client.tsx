@@ -9,6 +9,7 @@ import { ChallengeEditor } from '@/components/challenge-editor'
 import { TestResults } from '@/components/test-results'
 import { SolveCelebration } from '@/components/solve-celebration'
 import { DifficultyBadge } from '@/components/difficulty-badge'
+import ReactMarkdown from 'react-markdown'
 
 // ---------------------------------------------------------------------------
 // Props
@@ -210,8 +211,8 @@ export default function ChallengeSolveClient({
                 Problem
               </h3>
               <div className="rounded-lg border border-neutral-800 bg-neutral-900/60 p-5">
-                <div className="max-w-none whitespace-pre-wrap text-[15px] leading-7 text-neutral-300">
-                  {challenge.problemStatement}
+                <div className="prose prose-invert prose-sm max-w-none text-neutral-300 prose-headings:text-white prose-headings:font-semibold prose-h1:text-lg prose-h2:text-base prose-h2:mt-5 prose-h2:mb-2 prose-code:bg-neutral-800 prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded prose-code:text-lime-400 prose-code:before:content-none prose-code:after:content-none prose-pre:bg-neutral-950 prose-pre:border prose-pre:border-neutral-800 prose-li:text-neutral-300 prose-strong:text-white">
+                  <ReactMarkdown>{challenge.problemStatement}</ReactMarkdown>
                 </div>
               </div>
             </div>
