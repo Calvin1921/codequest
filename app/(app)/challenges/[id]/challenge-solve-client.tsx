@@ -51,6 +51,7 @@ export default function ChallengeSolveClient({
   const [showCelebration, setShowCelebration] = useState(false)
   const [celebrationXp, setCelebrationXp] = useState(0)
   const [hintsRevealed, setHintsRevealed] = useState(0)
+  const [mobileTab, setMobileTab] = useState<'problem' | 'editor'>('problem')
 
   const [isSubmitting, startSubmitTransition] = useTransition()
 
@@ -119,14 +120,44 @@ export default function ChallengeSolveClient({
         />
       )}
 
-      <div className="flex h-[calc(100vh-4rem)] flex-col gap-0 lg:flex-row">
+      {/* Mobile tab switcher */}
+      <div className="flex border-b border-neutral-800 lg:hidden">
+        <button
+          type="button"
+          onClick={() => setMobileTab('problem')}
+          className={`flex-1 px-4 py-3 text-sm font-medium transition-colors ${
+            mobileTab === 'problem'
+              ? 'border-b-2 border-lime-500 text-lime-400'
+              : 'text-neutral-400 hover:text-neutral-200'
+          }`}
+        >
+          Problem
+        </button>
+        <button
+          type="button"
+          onClick={() => setMobileTab('editor')}
+          className={`flex-1 px-4 py-3 text-sm font-medium transition-colors ${
+            mobileTab === 'editor'
+              ? 'border-b-2 border-lime-500 text-lime-400'
+              : 'text-neutral-400 hover:text-neutral-200'
+          }`}
+        >
+          Editor
+        </button>
+      </div>
+
+      <div className="flex min-h-[calc(100vh-4rem)] flex-col lg:h-[calc(100vh-4rem)] lg:flex-row">
         {/* ===== Problem panel (left) ===== */}
-        <section className="flex w-full shrink-0 flex-col overflow-y-auto border-b border-neutral-800 lg:w-2/5 lg:border-b-0 lg:border-r">
-          <div className="flex flex-col gap-5 p-5">
+        <section
+          className={`flex w-full shrink-0 flex-col overflow-y-auto border-b border-neutral-800 lg:w-[42%] lg:border-b-0 lg:border-r ${
+            mobileTab === 'editor' ? 'hidden lg:flex' : 'flex'
+          }`}
+        >
+          <div className="flex flex-col gap-6 p-6 lg:p-8">
             {/* Header */}
             <div className="space-y-3">
               <div className="flex flex-wrap items-center gap-2">
-                <h1 className="text-xl font-bold text-white">
+                <h1 className="text-xl font-bold text-white lg:text-2xl">
                   {challenge.title}
                 </h1>
                 <DifficultyBadge
@@ -137,7 +168,7 @@ export default function ChallengeSolveClient({
               </div>
 
               <div className="flex items-center gap-3">
-                <span className="rounded-md bg-neutral-800 px-2 py-0.5 text-[11px] font-medium capitalize text-neutral-400">
+                <span className="rounded-md bg-neutral-800 px-2.5 py-1 text-xs font-medium capitalize text-neutral-400">
                   {challenge.category}
                 </span>
                 <span className="font-mono text-sm font-bold tabular-nums text-lime-500">
@@ -163,23 +194,35 @@ export default function ChallengeSolveClient({
               )}
             </div>
 
+            {/* Description */}
+            <div>
+              <h3 className="mb-3 text-sm font-semibold uppercase tracking-wider text-neutral-400">
+                Description
+              </h3>
+              <p className="text-[15px] leading-7 text-neutral-300">
+                {challenge.description}
+              </p>
+            </div>
+
             {/* Problem statement */}
-            <div className="rounded-lg border border-neutral-800 bg-neutral-900/50 p-4">
-              <h4 className="mb-3 text-xs font-semibold uppercase tracking-wider text-neutral-500">
+            <div>
+              <h3 className="mb-3 text-sm font-semibold uppercase tracking-wider text-neutral-400">
                 Problem
-              </h4>
-              <div className="prose prose-sm prose-invert max-w-none whitespace-pre-wrap text-neutral-300">
-                {challenge.problemStatement}
+              </h3>
+              <div className="rounded-lg border border-neutral-800 bg-neutral-900/60 p-5">
+                <div className="max-w-none whitespace-pre-wrap text-[15px] leading-7 text-neutral-300">
+                  {challenge.problemStatement}
+                </div>
               </div>
             </div>
 
             {/* Hints */}
             {hints.length > 0 && (
-              <div className="rounded-lg border border-neutral-800 bg-neutral-900/50 p-4">
+              <div>
                 <div className="mb-3 flex items-center justify-between">
-                  <h4 className="text-xs font-semibold uppercase tracking-wider text-neutral-500">
+                  <h3 className="text-sm font-semibold uppercase tracking-wider text-neutral-400">
                     Hints ({hintsRevealed}/{hints.length})
-                  </h4>
+                  </h3>
                   {hintsRevealed < hints.length && (
                     <button
                       type="button"
@@ -191,13 +234,15 @@ export default function ChallengeSolveClient({
                   )}
                 </div>
                 {hintsRevealed > 0 && (
-                  <ol className="list-decimal space-y-2 pl-5 text-sm">
-                    {hints.slice(0, hintsRevealed).map((hint, i) => (
-                      <li key={i} className="text-neutral-400">
-                        {hint}
-                      </li>
-                    ))}
-                  </ol>
+                  <div className="rounded-lg border border-neutral-800 bg-neutral-900/60 p-5">
+                    <ol className="list-decimal space-y-2.5 pl-5 text-[15px] leading-7">
+                      {hints.slice(0, hintsRevealed).map((hint, i) => (
+                        <li key={i} className="text-neutral-300">
+                          {hint}
+                        </li>
+                      ))}
+                    </ol>
+                  </div>
                 )}
               </div>
             )}
@@ -210,7 +255,11 @@ export default function ChallengeSolveClient({
         </section>
 
         {/* ===== Editor panel (right) ===== */}
-        <section className="flex w-full flex-col lg:w-3/5">
+        <section
+          className={`flex min-h-[60vh] w-full flex-col lg:min-h-0 lg:w-[58%] ${
+            mobileTab === 'problem' ? 'hidden lg:flex' : 'flex'
+          }`}
+        >
           <div className="min-h-0 flex-1">
             <ChallengeEditor
               starterCode={challenge.starterCode}
@@ -223,16 +272,16 @@ export default function ChallengeSolveClient({
           </div>
 
           {executionError && (
-            <div className="border-t border-red-500/20 bg-red-500/5 px-4 py-3 text-sm">
+            <div className="border-t border-red-500/20 bg-red-500/5 px-5 py-3.5 text-sm">
               <p className="font-semibold text-red-400">Error</p>
-              <p className="mt-1 font-mono text-xs text-red-300">
+              <pre className="mt-1.5 overflow-x-auto whitespace-pre-wrap rounded bg-red-950/50 p-3 font-mono text-xs leading-5 text-red-300">
                 {executionError}
-              </p>
+              </pre>
             </div>
           )}
 
           {executionResult && executionResult.results.length > 0 && (
-            <div className="max-h-[40%] overflow-y-auto border-t border-neutral-800 bg-neutral-950 p-4">
+            <div className="max-h-[40%] overflow-y-auto border-t border-neutral-800 bg-neutral-950 p-5">
               <TestResults
                 results={executionResult.results}
                 passed={executionResult.passed}
