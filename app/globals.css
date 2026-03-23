@@ -120,3 +120,25 @@
     @apply bg-background text-foreground;
   }
 }
+
+/* Confetti animation for solve celebration */
+@keyframes confetti-fall {
+  0% { transform: translateY(-100vh) rotate(0deg); opacity: 1; }
+  100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
+}
+
+@keyframes confetti-shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-10px); }
+  75% { transform: translateX(10px); }
+}
+
+.confetti-piece {
+  position: fixed;
+  top: -10px;
+  width: 10px;
+  height: 10px;
+  z-index: 60;
+  animation: confetti-fall linear forwards,
+             confetti-shake 0.5s ease-in-out infinite;
+}

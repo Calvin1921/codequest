@@ -9,6 +9,19 @@ interface DailyGoalProps {
 }
 
 export function DailyGoal({ completed, goal, className }: DailyGoalProps) {
+  if (goal === 0) {
+    return (
+      <div
+        className={cn(
+          "flex flex-col gap-2 rounded-lg border px-4 py-3",
+          className
+        )}
+      >
+        <span className="text-muted-foreground text-sm">No daily goal set</span>
+      </div>
+    )
+  }
+
   const progress = Math.min((completed / goal) * 100, 100)
   const isComplete = completed >= goal
 
