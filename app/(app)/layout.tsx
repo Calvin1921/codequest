@@ -260,7 +260,7 @@ export default async function AppLayout({
       </header>
 
       <main className="min-h-screen pb-20 md:pb-0 md:pl-60">
-        <div className="mx-auto max-w-5xl px-4 py-6 sm:px-6 lg:px-8 lg:py-8">
+        <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8 lg:py-8">
           {children}
           {modal}
         </div>

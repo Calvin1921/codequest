@@ -45,8 +45,8 @@ function ProgressRing({
   completed: number
   total: number
 }) {
-  const size = 48
-  const strokeWidth = 4
+  const size = 56
+  const strokeWidth = 4.5
   const radius = (size - strokeWidth) / 2
   const circumference = 2 * Math.PI * radius
   const progress = total > 0 ? completed / total : 0
@@ -77,7 +77,7 @@ function ProgressRing({
           className="text-lime-500 transition-all duration-700 ease-out"
         />
       </svg>
-      <span className="absolute text-xs font-bold text-white">
+      <span className="absolute text-sm font-bold text-white">
         {completed}/{total}
       </span>
     </div>
@@ -106,50 +106,52 @@ function FilterBar({
   }
 
   return (
-    <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-      <div className="flex flex-wrap items-center gap-2">
-        <span className="mr-1 text-xs font-semibold uppercase tracking-wider text-neutral-500">
-          Difficulty
-        </span>
-        {DIFFICULTIES.map((d) => {
-          const isActive = currentDifficulty === d
-          return (
-            <Link
-              key={d}
-              href={buildHref({ difficulty: d })}
-              className={cn(
-                "rounded-full border px-3 py-1 text-xs font-medium capitalize transition-colors",
-                isActive
-                  ? DIFFICULTY_PILL_ACTIVE[d]
-                  : DIFFICULTY_PILL_COLORS[d]
-              )}
-            >
-              {d}
-            </Link>
-          )
-        })}
-      </div>
-      <div className="flex flex-wrap items-center gap-2">
-        <span className="mr-1 text-xs font-semibold uppercase tracking-wider text-neutral-500">
-          Category
-        </span>
-        {CATEGORIES.map((c) => {
-          const isActive = currentCategory === c
-          return (
-            <Link
-              key={c}
-              href={buildHref({ category: c })}
-              className={cn(
-                "rounded-full border px-3 py-1 text-xs font-medium capitalize transition-colors",
-                isActive
-                  ? "border-neutral-600 bg-neutral-800 text-white"
-                  : "border-neutral-700 text-neutral-400 hover:bg-neutral-800 hover:text-neutral-200"
-              )}
-            >
-              {c}
-            </Link>
-          )
-        })}
+    <div className="rounded-xl border border-neutral-800 bg-card p-5">
+      <div className="flex flex-col gap-5 md:flex-row md:items-center md:justify-between">
+        <div className="flex flex-wrap items-center gap-2.5">
+          <span className="mr-1 text-xs font-semibold uppercase tracking-wider text-neutral-500">
+            Difficulty
+          </span>
+          {DIFFICULTIES.map((d) => {
+            const isActive = currentDifficulty === d
+            return (
+              <Link
+                key={d}
+                href={buildHref({ difficulty: d })}
+                className={cn(
+                  "rounded-full border px-3.5 py-1.5 text-xs font-medium capitalize transition-colors",
+                  isActive
+                    ? DIFFICULTY_PILL_ACTIVE[d]
+                    : DIFFICULTY_PILL_COLORS[d]
+                )}
+              >
+                {d}
+              </Link>
+            )
+          })}
+        </div>
+        <div className="flex flex-wrap items-center gap-2.5">
+          <span className="mr-1 text-xs font-semibold uppercase tracking-wider text-neutral-500">
+            Category
+          </span>
+          {CATEGORIES.map((c) => {
+            const isActive = currentCategory === c
+            return (
+              <Link
+                key={c}
+                href={buildHref({ category: c })}
+                className={cn(
+                  "rounded-full border px-3.5 py-1.5 text-xs font-medium capitalize transition-colors",
+                  isActive
+                    ? "border-neutral-600 bg-neutral-800 text-white"
+                    : "border-neutral-700 text-neutral-400 hover:bg-neutral-800 hover:text-neutral-200"
+                )}
+              >
+                {c}
+              </Link>
+            )
+          })}
+        </div>
       </div>
     </div>
   )
@@ -186,7 +188,7 @@ function ChallengeCard({
     <Link href={`/challenges/${challenge.id}`} className="block">
       <div
         className={cn(
-          "group relative flex h-full flex-col rounded-xl border bg-card p-5 transition-all duration-200 cursor-pointer hover:-translate-y-0.5",
+          "group relative flex h-full flex-col rounded-xl border bg-card p-6 transition-all duration-200 cursor-pointer hover:-translate-y-0.5",
           difficultyGlow[challenge.difficulty],
           isCompleted &&
             "border-green-500/30 shadow-[0_0_12px_rgba(34,197,94,0.08)]",
@@ -215,19 +217,22 @@ function ChallengeCard({
         </div>
 
         {/* Title */}
-        <h3 className="mb-1.5 text-base font-semibold leading-snug text-white">
+        <h3 className="mb-2 text-lg font-semibold leading-snug text-white">
           {challenge.title}
         </h3>
 
         {/* Description */}
-        <p className="mb-4 line-clamp-2 flex-1 text-sm leading-relaxed text-neutral-400">
+        <p className="mb-5 line-clamp-3 flex-1 text-sm leading-relaxed text-neutral-400">
           {challenge.description}
         </p>
 
+        {/* Separator */}
+        <div className="mb-4 border-t border-neutral-800" />
+
         {/* Footer: XP + time + status */}
         <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <span className="font-mono text-sm font-bold tabular-nums text-lime-500">
+          <div className="flex items-center gap-4">
+            <span className="font-mono text-base font-bold tabular-nums text-lime-500">
               {isCompleted
                 ? `${challenge.userProgress?.xpEarned ?? 0} XP`
                 : `${challenge.xpReward} XP`}
@@ -241,9 +246,9 @@ function ChallengeCard({
 
           <div className="flex items-center gap-1.5">
             {isCompleted && (
-              <div className="flex items-center gap-1 text-green-400">
+              <div className="inline-flex items-center gap-1.5 rounded-full border border-green-500/20 bg-green-500/10 px-2.5 py-1 text-green-400">
                 <svg
-                  className="size-4"
+                  className="size-3.5"
                   viewBox="0 0 20 20"
                   fill="currentColor"
                 >
@@ -253,13 +258,13 @@ function ChallengeCard({
                     clipRule="evenodd"
                   />
                 </svg>
-                <span className="text-xs font-medium">Solved</span>
+                <span className="text-xs font-semibold">Solved</span>
               </div>
             )}
             {isInProgress && (
-              <div className="flex items-center gap-1 text-amber-400">
+              <div className="inline-flex items-center gap-1.5 rounded-full border border-amber-500/20 bg-amber-500/10 px-2.5 py-1 text-amber-400">
                 <svg
-                  className="size-4"
+                  className="size-3.5"
                   viewBox="0 0 20 20"
                   fill="currentColor"
                 >
@@ -269,7 +274,7 @@ function ChallengeCard({
                     clipRule="evenodd"
                   />
                 </svg>
-                <span className="text-xs font-medium">In Progress</span>
+                <span className="text-xs font-semibold">In Progress</span>
               </div>
             )}
             {!isCompleted && !isInProgress && (
@@ -350,7 +355,7 @@ async function ChallengeList({
 
   if (mapped.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center rounded-xl border border-neutral-800 bg-card py-16">
+      <div className="flex flex-col items-center justify-center rounded-xl border border-neutral-800 bg-card px-8 py-20">
         <div className="mb-4 text-neutral-700">
           <svg
             className="mx-auto size-12"
@@ -366,10 +371,10 @@ async function ChallengeList({
             />
           </svg>
         </div>
-        <h3 className="mb-1 text-lg font-semibold text-white">
+        <h3 className="mb-2 text-lg font-semibold text-white">
           No challenges match your filters
         </h3>
-        <p className="mb-4 text-sm text-neutral-500">
+        <p className="mb-6 text-sm text-neutral-500">
           Try adjusting your filters to see more challenges.
         </p>
         <Link
@@ -383,27 +388,11 @@ async function ChallengeList({
   }
 
   return (
-    <>
-      <div className="mb-6 flex items-center gap-4">
-        <ProgressRing completed={completedCount} total={mapped.length} />
-        <div>
-          <p className="text-sm font-medium text-white">
-            {completedCount} of {mapped.length} completed
-          </p>
-          <p className="text-xs text-neutral-500">
-            {mapped.length - completedCount === 0
-              ? "All challenges cleared!"
-              : `${mapped.length - completedCount} remaining`}
-          </p>
-        </div>
-      </div>
-
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-        {mapped.map((challenge) => (
-          <ChallengeCard key={challenge.id} challenge={challenge} />
-        ))}
-      </div>
-    </>
+    <div className="grid gap-5 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
+      {mapped.map((challenge) => (
+        <ChallengeCard key={challenge.id} challenge={challenge} />
+      ))}
+    </div>
   )
 }
 
@@ -421,22 +410,93 @@ export default async function ChallengesPage({
   const category = params.category ?? "all"
 
   return (
-    <div>
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold text-white">Challenges</h1>
-        <p className="mt-1 text-neutral-400">
-          Sharpen your skills with coding challenges. Earn XP and build your
-          streak.
-        </p>
+    <div className="space-y-8">
+      {/* Header banner */}
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-3xl font-bold text-white">Challenges</h1>
+          <p className="mt-1.5 text-neutral-400">
+            Sharpen your skills with coding challenges. Earn XP and build your
+            streak.
+          </p>
+        </div>
+        <Suspense
+          fallback={
+            <div className="flex items-center gap-4">
+              <div className="size-14 animate-pulse rounded-full bg-neutral-800" />
+              <div className="hidden sm:block space-y-1">
+                <div className="h-4 w-28 animate-pulse rounded bg-neutral-800" />
+                <div className="h-3 w-20 animate-pulse rounded bg-neutral-800" />
+              </div>
+            </div>
+          }
+        >
+          <HeaderProgress difficulty={difficulty} category={category} />
+        </Suspense>
       </div>
 
-      <div className="mb-6">
-        <FilterBar currentDifficulty={difficulty} currentCategory={category} />
-      </div>
+      {/* Filter bar */}
+      <FilterBar currentDifficulty={difficulty} currentCategory={category} />
 
+      {/* Challenge grid */}
       <Suspense fallback={<ChallengeListSkeleton />}>
         <ChallengeList difficulty={difficulty} category={category} />
       </Suspense>
+    </div>
+  )
+}
+
+// ---------------------------------------------------------------------------
+// Header Progress (server component - progress ring in header)
+// ---------------------------------------------------------------------------
+
+async function HeaderProgress({
+  difficulty,
+  category,
+}: {
+  difficulty: string
+  category: string
+}) {
+  const session = await auth()
+  if (!session?.user?.id) return null
+
+  const userId = session.user.id
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const where: Record<string, any> = { isPublished: true }
+  if (difficulty && difficulty !== "all") where.difficulty = difficulty
+  if (category && category !== "all") where.category = category
+
+  const challenges = await prisma.challenge.findMany({
+    where,
+    include: {
+      progress: {
+        where: { userId },
+        take: 1,
+      },
+    },
+  })
+
+  const total = challenges.length
+  const completedCount = challenges.filter(
+    (c) => c.progress[0]?.status === "completed"
+  ).length
+
+  if (total === 0) return null
+
+  return (
+    <div className="flex items-center gap-4">
+      <ProgressRing completed={completedCount} total={total} />
+      <div className="hidden sm:block">
+        <p className="text-sm font-medium text-white">
+          {completedCount} of {total} completed
+        </p>
+        <p className="text-xs text-neutral-500">
+          {total - completedCount === 0
+            ? "All challenges cleared!"
+            : `${total - completedCount} remaining`}
+        </p>
+      </div>
     </div>
   )
 }
@@ -447,34 +507,28 @@ export default async function ChallengesPage({
 
 function ChallengeListSkeleton() {
   return (
-    <>
-      <div className="mb-6 flex items-center gap-4">
-        <div className="size-12 animate-pulse rounded-full bg-neutral-800" />
-        <div className="space-y-1">
-          <div className="h-4 w-28 animate-pulse rounded bg-neutral-800" />
-          <div className="h-3 w-20 animate-pulse rounded bg-neutral-800" />
-        </div>
-      </div>
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-        {Array.from({ length: 6 }).map((_, i) => (
-          <div
-            key={i}
-            className="flex h-48 flex-col rounded-xl border border-neutral-800 bg-card p-5"
-          >
-            <div className="mb-3 flex items-center justify-between">
+    <div className="grid gap-5 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
+      {Array.from({ length: 6 }).map((_, i) => (
+        <div
+          key={i}
+          className="flex h-56 flex-col rounded-xl border border-neutral-800 bg-card p-6"
+        >
+          <div className="mb-3 flex items-center justify-between">
+            <div className="h-5 w-16 animate-pulse rounded bg-neutral-800" />
+            <div className="h-5 w-14 animate-pulse rounded-full bg-neutral-800" />
+          </div>
+          <div className="mb-2 h-5 w-3/4 animate-pulse rounded bg-neutral-800" />
+          <div className="mb-1 h-4 w-full animate-pulse rounded bg-neutral-800" />
+          <div className="mb-1 h-4 w-5/6 animate-pulse rounded bg-neutral-800" />
+          <div className="mb-5 h-4 w-2/3 animate-pulse rounded bg-neutral-800" />
+          <div className="mt-auto border-t border-neutral-800 pt-4">
+            <div className="flex items-center justify-between">
               <div className="h-5 w-16 animate-pulse rounded bg-neutral-800" />
-              <div className="h-5 w-14 animate-pulse rounded-full bg-neutral-800" />
-            </div>
-            <div className="mb-2 h-5 w-3/4 animate-pulse rounded bg-neutral-800" />
-            <div className="mb-1 h-4 w-full animate-pulse rounded bg-neutral-800" />
-            <div className="mb-4 h-4 w-2/3 animate-pulse rounded bg-neutral-800" />
-            <div className="mt-auto flex items-center justify-between">
-              <div className="h-4 w-16 animate-pulse rounded bg-neutral-800" />
-              <div className="h-4 w-12 animate-pulse rounded bg-neutral-800" />
+              <div className="h-6 w-16 animate-pulse rounded-full bg-neutral-800" />
             </div>
           </div>
-        ))}
-      </div>
-    </>
+        </div>
+      ))}
+    </div>
   )
 }
