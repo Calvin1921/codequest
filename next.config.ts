@@ -5,10 +5,6 @@ const nextConfig: NextConfig = {
   reactStrictMode: true,
   
   experimental: {
-    // Enable React Compiler if env flag is set
-    reactCompiler: process.env.ENABLE_REACT_COMPILER === 'true',
-    // Enable Partial Prerendering (requires canary)
-    // ppr: true,
     // Server Actions configuration
     serverActions: {
       bodySizeLimit: '2mb',
