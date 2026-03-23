@@ -52,7 +52,7 @@ export function executeCode(
   try {
     script = new vm.Script(userCode, {
       filename: 'user-code.js',
-      timeout: EXECUTION_TIMEOUT_MS,
+
     })
   } catch (err) {
     const error = err instanceof Error ? err.message : String(err)
@@ -61,7 +61,7 @@ export function executeCode(
       results: [],
       totalTests: testCases.length,
       passedTests: 0,
-      error: \`Compilation error: \${error}\`,
+      error: `Compilation error: ${error}`,
       executionTimeMs: performance.now() - overallStart,
     }
   }
@@ -127,37 +127,36 @@ export function executeCode(
         const expectedResults = testCase.expected as unknown[]
 
         const callScript = new vm.Script(
-          \`
+          `
           (function() {
-            const instance = new \${fnName}(\${JSON.stringify(operations[0].slice(1)).slice(1, -1)});
+            const instance = new ${fnName}(${JSON.stringify(operations[0].slice(1)).slice(1, -1)});
             const results = [null];
-            for (let i = 1; i < \${JSON.stringify(operations)}.length; i++) {
-              const [method, ...args] = \${JSON.stringify(operations)}[i];
+            for (let i = 1; i < ${JSON.stringify(operations)}.length; i++) {
+              const [method, ...args] = ${JSON.stringify(operations)}[i];
               results.push(instance[method](...args));
             }
             return results;
           })()
-          \`,
-          { timeout: EXECUTION_TIMEOUT_MS }
+          `,
+          
         )
 
         result.actual = callScript.runInContext(context, {
-          timeout: EXECUTION_TIMEOUT_MS,
+    
         })
         result.passed = deepEqual(result.actual, expectedResults)
       } else if (typeof fn === 'function') {
         // Standard function call
         const callScript = new vm.Script(
-          \`\${fnName}(\${testCase.input.map((arg) => JSON.stringify(arg)).join(', ')})\`,
-          { timeout: EXECUTION_TIMEOUT_MS }
+          `${fnName}(${testCase.input.map((arg) => JSON.stringify(arg)).join(', ')})`,
         )
 
         result.actual = callScript.runInContext(context, {
-          timeout: EXECUTION_TIMEOUT_MS,
+    
         })
         result.passed = deepEqual(result.actual, testCase.expected)
       } else {
-        result.error = \`"\${fnName}" is not defined as a function\`
+        result.error = `"${fnName}" is not defined as a function`
       }
     } catch (err) {
       if (err instanceof Error) {
@@ -165,10 +164,10 @@ export function executeCode(
           result.error =
             'Execution timed out (possible infinite loop or excessive computation)'
         } else {
-          result.error = \`Runtime error: \${err.message}\`
+          result.error = `Runtime error: ${err.message}`
         }
       } else {
-        result.error = \`Runtime error: \${String(err)}\`
+        result.error = `Runtime error: ${String(err)}`
       }
     }
 
