@@ -260,7 +260,7 @@ export default function ChallengeSolveClient({
             mobileTab === 'problem' ? 'hidden lg:flex' : 'flex'
           }`}
         >
-          <div className="min-h-[400px] h-[50vh] lg:h-auto lg:min-h-0 lg:flex-1">
+          <div className="min-h-[450px] h-[60vh] lg:h-auto lg:min-h-0 lg:flex-1">
             <ChallengeEditor
               starterCode={challenge.starterCode}
               language="javascript"
