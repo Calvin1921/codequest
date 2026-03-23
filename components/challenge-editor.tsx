@@ -1,19 +1,18 @@
 "use client"
 
-import { useCallback, useRef, useState, useImperativeHandle, forwardRef } from "react"
+import { useCallback, useRef, useImperativeHandle, forwardRef } from "react"
 import Editor, { type OnMount } from "@monaco-editor/react"
 
 export interface ChallengeEditorHandle {
   getCode: () => string
   reset: () => void
+  layout: () => void
 }
 
 interface ChallengeEditorProps {
   starterCode: string
   language: string
   onSubmit: (code: string) => void
-  onSave?: (code: string) => void
-  isSubmitting?: boolean
   previousCode?: string
 }
 
@@ -27,21 +26,22 @@ export const ChallengeEditor = forwardRef<ChallengeEditorHandle, ChallengeEditor
     },
     ref
   ) {
-    const [code, setCode] = useState(previousCode ?? starterCode)
     const editorRef = useRef<Parameters<OnMount>[0] | null>(null)
 
     useImperativeHandle(ref, () => ({
-      getCode: () => code,
+      getCode: () => editorRef.current?.getValue() ?? starterCode,
       reset: () => {
         const confirmed = window.confirm(
           "Reset to starter code? Your current changes will be lost."
         )
         if (confirmed) {
-          setCode(starterCode)
           editorRef.current?.setValue(starterCode)
         }
       },
-    }), [code, starterCode])
+      layout: () => {
+        editorRef.current?.layout()
+      },
+    }), [starterCode])
 
     const handleEditorDidMount: OnMount = useCallback(
       (editor, monaco) => {
@@ -65,9 +65,8 @@ export const ChallengeEditor = forwardRef<ChallengeEditorHandle, ChallengeEditor
         <Editor
           height="100%"
           language={language}
-          value={code}
+          defaultValue={previousCode ?? starterCode}
           theme="vs-dark"
-          onChange={(value) => setCode(value ?? "")}
           onMount={handleEditorDidMount}
           loading={
             <div className="flex h-full items-center justify-center bg-[#1e1e1e]">
@@ -78,8 +77,8 @@ export const ChallengeEditor = forwardRef<ChallengeEditorHandle, ChallengeEditor
             minimap: { enabled: false },
             fontSize: 14,
             lineNumbers: "on",
-            scrollBeyondLastLine: true,
-            automaticLayout: true,
+            scrollBeyondLastLine: false,
+            automaticLayout: false,
             tabSize: 2,
             wordWrap: "on",
             padding: { top: 16 },

@@ -13,17 +13,15 @@ import Link from 'next/link'
 import { ChevronLeft, Play, RotateCcw } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import type { ExecutionResult } from '@/lib/types'
-import { submitSolution, saveDraft } from '@/server/actions/progress'
+import { submitSolution } from '@/server/actions/progress'
 import type { SubmitResult } from '@/server/actions/progress'
 import { ChallengeEditor, type ChallengeEditorHandle } from '@/components/challenge-editor'
-import { TestResults } from '@/components/test-results'
 import { SolveCelebration } from '@/components/solve-celebration'
 import { DifficultyBadge } from '@/components/difficulty-badge'
+import { ChallengeHeader } from '@/components/challenge-header'
+import { TestCaseList } from '@/components/test-case-card'
+import { ResultsPanel } from '@/components/results-panel'
 import ReactMarkdown from 'react-markdown'
-
-// ---------------------------------------------------------------------------
-// Props
-// ---------------------------------------------------------------------------
 
 export interface ChallengeSolveProps {
   challenge: {
@@ -46,10 +44,6 @@ export interface ChallengeSolveProps {
   }
 }
 
-// ---------------------------------------------------------------------------
-// Main component
-// ---------------------------------------------------------------------------
-
 export default function ChallengeSolveClient({
   challenge,
   progress,
@@ -61,8 +55,10 @@ export default function ChallengeSolveClient({
     useState<ExecutionResult | null>(null)
   const [executionError, setExecutionError] = useState<string | null>(null)
   const [showCelebration, setShowCelebration] = useState(false)
-  const [celebrationXp, setCelebrationXp] = useState(0)
   const [hintsRevealed, setHintsRevealed] = useState(0)
+
+  // Store xpAwarded on a ref — derived from the submit result, no separate state needed
+  const xpAwardedRef = useRef(0)
 
   // Mobile: switch between Problem / Code / Results
   const [mobileView, setMobileView] = useState<'problem' | 'code' | 'results'>('problem')
@@ -77,14 +73,15 @@ export default function ChallengeSolveClient({
 
   const isSolved = progress?.status === 'completed'
 
-  // ---- Hide sidebar on mount ----
+  // Hide sidebar on mount
   useEffect(() => {
     document.body.classList.add('solve-page-active')
     return () => document.body.classList.remove('solve-page-active')
   }, [])
 
-  // ---- Resizable horizontal split (left/right) ----
+  // Resizable horizontal split (left/right) — ref-based drag for performance
   const containerRef = useRef<HTMLDivElement>(null)
+  const leftPanelRef = useRef<HTMLElement>(null)
   const [splitPercent, setSplitPercent] = useState(() => {
     if (typeof window !== 'undefined') {
       const stored = localStorage.getItem('cq-split')
@@ -101,12 +98,22 @@ export default function ChallengeSolveClient({
     splitPercentRef.current = splitPercent
   }, [splitPercent])
 
+  // Track active drag listeners for cleanup on unmount
+  const dragCleanupRef = useRef<(() => void) | null>(null)
+
+  useEffect(() => {
+    return () => {
+      dragCleanupRef.current?.()
+    }
+  }, [])
+
   const handleHorizontalDrag = useCallback((e: React.MouseEvent) => {
     e.preventDefault()
     const startX = e.clientX
     const startPercent = splitPercentRef.current
     const container = containerRef.current
-    if (!container) return
+    const leftPanel = leftPanelRef.current
+    if (!container || !leftPanel) return
 
     document.body.style.cursor = 'col-resize'
     document.body.style.userSelect = 'none'
@@ -116,23 +123,38 @@ export default function ChallengeSolveClient({
       const delta = moveEvent.clientX - startX
       const deltaPercent = (delta / containerWidth) * 100
       const newPercent = Math.min(60, Math.max(25, startPercent + deltaPercent))
-      setSplitPercent(Math.round(newPercent))
+      const rounded = Math.round(newPercent)
+      splitPercentRef.current = rounded
+      // Mutate DOM directly during drag to avoid re-renders
+      leftPanel.style.width = `${rounded}%`
     }
 
     const handleDragEnd = () => {
       document.removeEventListener('mousemove', handleDrag)
       document.removeEventListener('mouseup', handleDragEnd)
+      dragCleanupRef.current = null
       document.body.style.cursor = ''
       document.body.style.userSelect = ''
+      // Sync state on mouseup
+      setSplitPercent(splitPercentRef.current)
       localStorage.setItem('cq-split', String(splitPercentRef.current))
+      editorRef.current?.layout()
+    }
+
+    dragCleanupRef.current = () => {
+      document.removeEventListener('mousemove', handleDrag)
+      document.removeEventListener('mouseup', handleDragEnd)
+      document.body.style.cursor = ''
+      document.body.style.userSelect = ''
     }
 
     document.addEventListener('mousemove', handleDrag)
     document.addEventListener('mouseup', handleDragEnd)
   }, [])
 
-  // ---- Resizable vertical split (editor/results) ----
+  // Resizable vertical split (editor/results) — ref-based drag for performance
   const rightPanelRef = useRef<HTMLDivElement>(null)
+  const editorContainerRef = useRef<HTMLDivElement>(null)
   const [editorPercent, setEditorPercent] = useState(70)
   const editorPercentRef = useRef(editorPercent)
   useEffect(() => {
@@ -144,7 +166,8 @@ export default function ChallengeSolveClient({
     const startY = e.clientY
     const startPercent = editorPercentRef.current
     const panel = rightPanelRef.current
-    if (!panel) return
+    const editorContainer = editorContainerRef.current
+    if (!panel || !editorContainer) return
 
     document.body.style.cursor = 'row-resize'
     document.body.style.userSelect = 'none'
@@ -154,27 +177,45 @@ export default function ChallengeSolveClient({
       const delta = moveEvent.clientY - startY
       const deltaPercent = (delta / panelHeight) * 100
       const newPercent = Math.min(85, Math.max(40, startPercent + deltaPercent))
-      setEditorPercent(Math.round(newPercent))
+      const rounded = Math.round(newPercent)
+      editorPercentRef.current = rounded
+      // Mutate DOM directly during drag to avoid re-renders
+      editorContainer.style.height = `${rounded}%`
     }
 
     const handleDragEnd = () => {
+      document.removeEventListener('mousemove', handleDrag)
+      document.removeEventListener('mouseup', handleDragEnd)
+      dragCleanupRef.current = null
+      document.body.style.cursor = ''
+      document.body.style.userSelect = ''
+      // Sync state on mouseup
+      setEditorPercent(editorPercentRef.current)
+      editorRef.current?.layout()
+    }
+
+    const cleanup = () => {
       document.removeEventListener('mousemove', handleDrag)
       document.removeEventListener('mouseup', handleDragEnd)
       document.body.style.cursor = ''
       document.body.style.userSelect = ''
     }
 
+    // Chain cleanup: store the latest cleanup function
+    const prevCleanup = dragCleanupRef.current
+    dragCleanupRef.current = () => {
+      prevCleanup?.()
+      cleanup()
+    }
+
     document.addEventListener('mousemove', handleDrag)
     document.addEventListener('mouseup', handleDragEnd)
   }, [])
 
-  // ---- Parse data ----
-  let hints: string[] = []
-  try {
-    hints = JSON.parse(challenge.hints) as string[]
-  } catch {
-    // hints stay empty
-  }
+  // Memoize hints parsing
+  const hints = useMemo(() => {
+    try { return JSON.parse(challenge.hints) as string[] } catch { return [] }
+  }, [challenge.hints])
 
   const allTestCases = useMemo(() => {
     try {
@@ -187,8 +228,6 @@ export default function ChallengeSolveClient({
       return []
     }
   }, [challenge.testCases])
-
-  // ---- Handlers ----
 
   const handleSubmit = useCallback(
     (code: string) => {
@@ -203,7 +242,7 @@ export default function ChallengeSolveClient({
           setExecutionResult(result.execution)
 
           if (result.execution.passed && !result.alreadyCompleted) {
-            setCelebrationXp(result.xpAwarded)
+            xpAwardedRef.current = result.xpAwarded
             setShowCelebration(true)
           } else if (result.execution.error) {
             setExecutionError(result.execution.error)
@@ -220,16 +259,8 @@ export default function ChallengeSolveClient({
     [challenge.id],
   )
 
-  const handleSave = useCallback(
-    (code: string) => {
-      saveDraft(challenge.id, code).catch(() => {
-        // save failed silently
-      })
-    },
-    [challenge.id],
-  )
-
-  const handleRunFromToolbar = useCallback(() => {
+  // Running tests IS submitting a solution — they are intentionally the same action.
+  const handleRunTests = useCallback(() => {
     const code = editorRef.current?.getCode()
     if (code !== undefined) {
       handleSubmit(code)
@@ -244,23 +275,19 @@ export default function ChallengeSolveClient({
     setHintsRevealed((prev) => Math.min(prev + 1, hints.length))
   }, [hints.length])
 
-  // ---- Render ----
-
   return (
     <>
       {showCelebration && (
         <SolveCelebration
-          xpAwarded={celebrationXp}
+          xpAwarded={xpAwardedRef.current}
           onDismiss={() => setShowCelebration(false)}
           onNextChallenge={() => router.push('/challenges')}
         />
       )}
 
-      {/* ===== DESKTOP LAYOUT ===== */}
+      {/* Desktop layout */}
       <div className="hidden lg:flex h-screen flex-col">
-        {/* Top toolbar — 40px, dark, full-width */}
         <div className="flex h-10 shrink-0 items-center justify-between border-b border-neutral-800 bg-neutral-950 px-3">
-          {/* Left: navigation */}
           <div className="flex items-center gap-2 min-w-0">
             <Link
               href="/challenges"
@@ -283,12 +310,11 @@ export default function ChallengeSolveClient({
             )}
           </div>
 
-          {/* Right: actions */}
           <div className="flex items-center gap-2">
             <span className="text-xs text-neutral-500">⌘+Enter</span>
             <button
               type="button"
-              onClick={handleRunFromToolbar}
+              onClick={handleRunTests}
               disabled={isSubmitting}
               className="flex items-center gap-1.5 rounded-md border border-neutral-700 bg-neutral-800 px-3 py-1 text-sm text-neutral-300 hover:bg-neutral-700 transition-colors disabled:opacity-50"
             >
@@ -297,27 +323,17 @@ export default function ChallengeSolveClient({
               ) : (
                 <Play className="h-3.5 w-3.5" />
               )}
-              {isSubmitting ? 'Running...' : 'Run'}
-            </button>
-            <button
-              type="button"
-              onClick={handleRunFromToolbar}
-              disabled={isSubmitting}
-              className="flex items-center gap-1.5 rounded-md bg-lime-600 px-3 py-1 text-sm font-medium text-black hover:bg-lime-500 transition-colors disabled:opacity-50"
-            >
-              Submit
+              {isSubmitting ? 'Running...' : 'Run Tests'}
             </button>
           </div>
         </div>
 
-        {/* Main area: left panel + divider + right panel */}
         <div ref={containerRef} className="flex flex-1 min-h-0">
-          {/* ===== Left panel ===== */}
           <section
+            ref={leftPanelRef}
             style={{ width: `${splitPercent}%` }}
             className="flex shrink-0 flex-col border-r border-neutral-800"
           >
-            {/* Left panel tabs */}
             <div className="flex items-center border-b border-neutral-800 bg-neutral-900/50 shrink-0">
               {(['problem', 'testcases', 'hints'] as const).map((tab) => (
                 <button
@@ -340,46 +356,15 @@ export default function ChallengeSolveClient({
               ))}
             </div>
 
-            {/* Tab content — scrollable */}
             <div className="flex-1 overflow-y-auto">
               {leftTab === 'problem' && (
                 <div className="p-6">
-                  {/* Header */}
-                  <div className="space-y-3 mb-6">
-                    <div className="flex flex-wrap items-center gap-2">
-                      <h1 className="text-xl font-bold text-white">
-                        {challenge.title}
-                      </h1>
-                      <DifficultyBadge
-                        difficulty={
-                          challenge.difficulty as 'easy' | 'medium' | 'hard'
-                        }
-                      />
-                    </div>
-                    <div className="flex items-center gap-3">
-                      <span className="rounded-md bg-neutral-800 px-2.5 py-1 text-xs font-medium capitalize text-neutral-400">
-                        {challenge.category}
-                      </span>
-                      <span className="font-mono text-sm font-bold tabular-nums text-lime-500">
-                        {challenge.xpReward} XP
-                      </span>
-                    </div>
+                  <ChallengeHeader
+                    challenge={challenge}
+                    isSolved={isSolved}
+                    xpEarned={progress?.xpEarned}
+                  />
 
-                    {isSolved && (
-                      <div className="flex items-center gap-2 rounded-lg border border-green-500/30 bg-green-500/10 px-3 py-2 text-sm font-medium text-green-400">
-                        <svg className="size-4" viewBox="0 0 20 20" fill="currentColor">
-                          <path
-                            fillRule="evenodd"
-                            d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.857-9.809a.75.75 0 00-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 10-1.06 1.061l2.5 2.5a.75.75 0 001.137-.089l4-5.5z"
-                            clipRule="evenodd"
-                          />
-                        </svg>
-                        Solved — {progress?.xpEarned ?? 0} XP earned
-                      </div>
-                    )}
-                  </div>
-
-                  {/* Problem statement */}
                   <div className="prose prose-invert prose-sm max-w-none text-neutral-300 prose-headings:text-white prose-headings:font-semibold prose-h1:text-lg prose-h2:text-base prose-h2:mt-5 prose-h2:mb-2 prose-code:bg-neutral-800 prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded prose-code:text-lime-400 prose-code:before:content-none prose-code:after:content-none prose-pre:bg-neutral-950 prose-pre:border prose-pre:border-neutral-800 prose-li:text-neutral-300 prose-strong:text-white">
                     <ReactMarkdown>{challenge.problemStatement}</ReactMarkdown>
                   </div>
@@ -395,30 +380,7 @@ export default function ChallengeSolveClient({
                   <h3 className="text-sm font-bold uppercase tracking-widest text-zinc-500 mb-4">
                     Test Cases ({allTestCases.length})
                   </h3>
-                  <div className="space-y-3">
-                    {allTestCases.map((tc, i) => (
-                      <div
-                        key={i}
-                        className="rounded-lg border border-neutral-800 bg-neutral-900/60 p-4"
-                      >
-                        <p className="mb-1 text-xs font-medium text-neutral-500">
-                          {tc.description}
-                        </p>
-                        <pre className="overflow-x-auto font-mono text-xs leading-5 text-neutral-300">
-                          <span className="text-zinc-500">Input:    </span>
-                          {JSON.stringify(tc.input)}
-                          {'\n'}
-                          <span className="text-zinc-500">Expected: </span>
-                          <span className="text-lime-400">
-                            {JSON.stringify(tc.expected)}
-                          </span>
-                        </pre>
-                      </div>
-                    ))}
-                    {allTestCases.length === 0 && (
-                      <p className="text-sm text-neutral-600">No test cases available.</p>
-                    )}
-                  </div>
+                  <TestCaseList testCases={allTestCases} total={allTestCases.length} />
                 </div>
               )}
 
@@ -461,7 +423,6 @@ export default function ChallengeSolveClient({
             </div>
           </section>
 
-          {/* ===== Horizontal divider (draggable) ===== */}
           <div
             onMouseDown={handleHorizontalDrag}
             className="flex w-1.5 cursor-col-resize items-center justify-center bg-neutral-800 hover:bg-lime-500/50 transition-colors group shrink-0"
@@ -469,9 +430,7 @@ export default function ChallengeSolveClient({
             <div className="w-0.5 h-8 rounded-full bg-neutral-600 group-hover:bg-lime-400 transition-colors" />
           </div>
 
-          {/* ===== Right panel: editor + results ===== */}
           <section ref={rightPanelRef} className="flex min-w-0 flex-1 flex-col">
-            {/* Editor header */}
             <div className="flex items-center justify-between border-b border-neutral-800 bg-neutral-900/50 px-4 py-1.5 shrink-0">
               <div className="flex items-center gap-2">
                 <span className="text-sm font-medium text-neutral-300">Code</span>
@@ -487,28 +446,22 @@ export default function ChallengeSolveClient({
               </button>
             </div>
 
-            {/* Editor — fills top portion */}
-            <div style={{ height: `${editorPercent}%` }} className="min-h-0 shrink-0">
+            <div ref={editorContainerRef} style={{ height: `${editorPercent}%` }} className="min-h-0 shrink-0">
               <ChallengeEditor
                 ref={editorRef}
                 starterCode={challenge.starterCode}
                 language="javascript"
                 onSubmit={handleSubmit}
-                onSave={handleSave}
-                isSubmitting={isSubmitting}
                 previousCode={progress?.submittedCode ?? undefined}
               />
             </div>
 
-            {/* Vertical divider (draggable) */}
             <div
               onMouseDown={handleVerticalDrag}
               className="h-1.5 cursor-row-resize bg-neutral-800 hover:bg-lime-500/50 transition-colors shrink-0"
             />
 
-            {/* Bottom panel: test results */}
             <div className="flex flex-1 min-h-[100px] flex-col">
-              {/* Bottom tabs */}
               <div className="flex items-center border-b border-neutral-800 bg-neutral-900/50 shrink-0">
                 <button
                   type="button"
@@ -546,55 +499,21 @@ export default function ChallengeSolveClient({
                 </button>
               </div>
 
-              {/* Bottom tab content */}
               <div className="flex-1 overflow-y-auto p-4">
                 {bottomTab === 'testcase' && (
-                  <div className="space-y-3">
-                    {allTestCases.slice(0, 3).map((tc, i) => (
-                      <div key={i} className="rounded-lg border border-neutral-800 bg-neutral-900/60 p-3">
-                        <p className="mb-1 text-xs font-medium text-neutral-500">{tc.description}</p>
-                        <pre className="overflow-x-auto font-mono text-xs leading-5 text-neutral-300">
-                          <span className="text-zinc-500">Input:    </span>
-                          {JSON.stringify(tc.input)}
-                          {'\n'}
-                          <span className="text-zinc-500">Expected: </span>
-                          <span className="text-lime-400">{JSON.stringify(tc.expected)}</span>
-                        </pre>
-                      </div>
-                    ))}
-                  </div>
+                  <TestCaseList testCases={allTestCases} limit={3} total={allTestCases.length} />
                 )}
 
                 {bottomTab === 'result' && (
-                  <>
-                    {executionError && (
-                      <div className="mb-3 rounded-lg border border-red-500/20 bg-red-500/5 px-4 py-3 text-sm">
-                        <p className="font-semibold text-red-400">Error</p>
-                        <pre className="mt-1.5 overflow-x-auto whitespace-pre-wrap rounded bg-red-950/50 p-3 font-mono text-xs leading-5 text-red-300">
-                          {executionError}
-                        </pre>
-                      </div>
-                    )}
-
-                    {executionResult && executionResult.results.length > 0 ? (
-                      <TestResults
-                        results={executionResult.results}
-                        passed={executionResult.passed}
-                        totalTests={executionResult.totalTests}
-                        passedTests={executionResult.passedTests}
-                        xpAwarded={celebrationXp}
-                      />
-                    ) : !executionError ? (
-                      <p className="py-6 text-center text-sm text-neutral-600">
-                        Run tests to see results here
-                      </p>
-                    ) : null}
-                  </>
+                  <ResultsPanel
+                    executionResult={executionResult}
+                    executionError={executionError}
+                    xpAwarded={xpAwardedRef.current}
+                  />
                 )}
               </div>
             </div>
 
-            {/* Status bar */}
             <div className="flex items-center justify-between border-t border-neutral-800 bg-neutral-950 px-4 py-1 text-xs text-neutral-600 shrink-0">
               <span>{isSolved ? 'Solved' : 'Unsaved'}</span>
               <span className="font-mono">JavaScript</span>
@@ -603,9 +522,8 @@ export default function ChallengeSolveClient({
         </div>
       </div>
 
-      {/* ===== MOBILE LAYOUT ===== */}
+      {/* Mobile layout */}
       <div className="flex lg:hidden h-screen flex-col">
-        {/* Mobile toolbar */}
         <div className="flex h-10 shrink-0 items-center justify-between border-b border-neutral-800 bg-neutral-950 px-3">
           <div className="flex items-center gap-2 min-w-0">
             <Link
@@ -620,7 +538,7 @@ export default function ChallengeSolveClient({
           </div>
           <button
             type="button"
-            onClick={handleRunFromToolbar}
+            onClick={handleRunTests}
             disabled={isSubmitting}
             className="flex items-center gap-1.5 rounded-md bg-lime-600 px-3 py-1 text-sm font-medium text-black hover:bg-lime-500 transition-colors disabled:opacity-50"
           >
@@ -629,43 +547,24 @@ export default function ChallengeSolveClient({
             ) : (
               <Play className="h-3.5 w-3.5" />
             )}
-            {isSubmitting ? 'Running...' : 'Submit'}
+            {isSubmitting ? 'Running...' : 'Run Tests'}
           </button>
         </div>
 
-        {/* Mobile content area */}
         <div className="flex-1 min-h-0 overflow-y-auto">
           {mobileView === 'problem' && (
             <div className="p-4">
-              <div className="space-y-3 mb-4">
-                <div className="flex flex-wrap items-center gap-2">
-                  <h1 className="text-lg font-bold text-white">
-                    {challenge.title}
-                  </h1>
-                  <DifficultyBadge
-                    difficulty={challenge.difficulty as 'easy' | 'medium' | 'hard'}
-                  />
-                </div>
-                <div className="flex items-center gap-3">
-                  <span className="rounded-md bg-neutral-800 px-2.5 py-1 text-xs font-medium capitalize text-neutral-400">
-                    {challenge.category}
-                  </span>
-                  <span className="font-mono text-sm font-bold tabular-nums text-lime-500">
-                    {challenge.xpReward} XP
-                  </span>
-                </div>
-                {isSolved && (
-                  <div className="flex items-center gap-2 rounded-lg border border-green-500/30 bg-green-500/10 px-3 py-2 text-sm font-medium text-green-400">
-                    Solved — {progress?.xpEarned ?? 0} XP earned
-                  </div>
-                )}
-              </div>
+              <ChallengeHeader
+                challenge={challenge}
+                isSolved={isSolved}
+                xpEarned={progress?.xpEarned}
+                compact
+              />
 
               <div className="prose prose-invert prose-sm max-w-none text-neutral-300 prose-headings:text-white prose-headings:font-semibold prose-h1:text-lg prose-h2:text-base prose-h2:mt-5 prose-h2:mb-2 prose-code:bg-neutral-800 prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded prose-code:text-lime-400 prose-code:before:content-none prose-code:after:content-none prose-pre:bg-neutral-950 prose-pre:border prose-pre:border-neutral-800 prose-li:text-neutral-300 prose-strong:text-white">
                 <ReactMarkdown>{challenge.problemStatement}</ReactMarkdown>
               </div>
 
-              {/* Hints inline on mobile */}
               {hints.length > 0 && (
                 <div className="mt-6">
                   <div className="mb-3 flex items-center justify-between">
@@ -703,8 +602,6 @@ export default function ChallengeSolveClient({
                 starterCode={challenge.starterCode}
                 language="javascript"
                 onSubmit={handleSubmit}
-                onSave={handleSave}
-                isSubmitting={isSubmitting}
                 previousCode={progress?.submittedCode ?? undefined}
               />
             </div>
@@ -712,33 +609,15 @@ export default function ChallengeSolveClient({
 
           {mobileView === 'results' && (
             <div className="p-4">
-              {executionError && (
-                <div className="mb-3 rounded-lg border border-red-500/20 bg-red-500/5 px-4 py-3 text-sm">
-                  <p className="font-semibold text-red-400">Error</p>
-                  <pre className="mt-1.5 overflow-x-auto whitespace-pre-wrap rounded bg-red-950/50 p-3 font-mono text-xs leading-5 text-red-300">
-                    {executionError}
-                  </pre>
-                </div>
-              )}
-
-              {executionResult && executionResult.results.length > 0 ? (
-                <TestResults
-                  results={executionResult.results}
-                  passed={executionResult.passed}
-                  totalTests={executionResult.totalTests}
-                  passedTests={executionResult.passedTests}
-                  xpAwarded={celebrationXp}
-                />
-              ) : !executionError ? (
-                <p className="py-6 text-center text-sm text-neutral-600">
-                  Run tests to see results here
-                </p>
-              ) : null}
+              <ResultsPanel
+                executionResult={executionResult}
+                executionError={executionError}
+                xpAwarded={xpAwardedRef.current}
+              />
             </div>
           )}
         </div>
 
-        {/* Mobile bottom tab bar */}
         <div className="flex shrink-0 border-t border-neutral-800 bg-neutral-950">
           {(['problem', 'code', 'results'] as const).map((tab) => (
             <button

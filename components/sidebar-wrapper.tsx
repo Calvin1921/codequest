@@ -16,14 +16,10 @@ export function SidebarWrapper({
   mobileHeader,
   mobileTabBar,
 }: SidebarWrapperProps) {
-  const [collapsed, setCollapsed] = useState(false)
-  const [mounted, setMounted] = useState(false)
-
-  // Hydrate collapsed state from localStorage after mount
-  useEffect(() => {
-    setCollapsed(localStorage.getItem('cq-sidebar-collapsed') === 'true')
-    setMounted(true)
-  }, [])
+  const [collapsed, setCollapsed] = useState(() => {
+    if (typeof window === 'undefined') return false
+    return localStorage.getItem('cq-sidebar-collapsed') === 'true'
+  })
 
   const toggle = useCallback(() => {
     setCollapsed((prev) => {
@@ -47,17 +43,9 @@ export function SidebarWrapper({
 
   return (
     <div className="min-h-screen bg-zinc-950 text-zinc-100">
-      {/* Inject style for collapsed sidebar labels */}
-      {collapsed && (
-        <style>{`
-          .sidebar-label {
-            display: none !important;
-          }
-        `}</style>
-      )}
-
       {/* Desktop sidebar */}
       <aside
+        data-collapsed={collapsed || undefined}
         className={`fixed inset-y-0 left-0 z-40 hidden flex-col border-r border-zinc-800/80 bg-zinc-950 transition-[width] duration-200 ease-in-out md:flex ${
           collapsed ? 'w-[52px]' : 'w-60'
         }`}

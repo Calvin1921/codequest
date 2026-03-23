@@ -424,6 +424,9 @@
    Solve Page — Full-screen IDE mode
    Hides sidebar, header, tab bar when active
    ============================================ */
+/* Sidebar collapsed label hiding */
+[data-collapsed] .sidebar-label { display: none; }
+
 .solve-page-active aside { display: none !important; }
 .solve-page-active main { padding-left: 0 !important; padding: 0 !important; min-height: auto !important; }
 .solve-page-active .mobile-header,
