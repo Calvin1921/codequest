@@ -1,9 +1,10 @@
 import { auth } from "@/lib/auth"
-import prisma from "@/server/db"
+import { prisma } from "@/server/db"
 import { redirect } from "next/navigation"
 import { Suspense } from "react"
 import Link from "next/link"
 import { cn } from "@/lib/utils"
+import type { Difficulty } from "@/lib/types"
 
 const DIFFICULTIES = ["all", "easy", "medium", "hard"] as const
 const CATEGORIES = [
@@ -168,7 +169,7 @@ function ChallengeCard({
     id: string
     title: string
     description: string
-    difficulty: string
+    difficulty: Difficulty
     category: string
     xpReward: number
     timeEstimate: number
@@ -178,7 +179,7 @@ function ChallengeCard({
   const isCompleted = challenge.userProgress?.status === "completed"
   const isInProgress = challenge.userProgress?.status === "in_progress"
 
-  const difficultyGlow: Record<string, string> = {
+  const difficultyGlow: Record<Difficulty, string> = {
     easy: "hover:shadow-[0_0_20px_rgba(34,197,94,0.15)]",
     medium: "hover:shadow-[0_0_20px_rgba(245,158,11,0.15)]",
     hard: "hover:shadow-[0_0_20px_rgba(244,63,94,0.15)]",
@@ -313,8 +314,7 @@ async function ChallengeList({
 
   const userId = session.user.id
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const where: Record<string, any> = { isPublished: true }
+  const where: Record<string, unknown> = { isPublished: true }
   if (difficulty && difficulty !== "all") where.difficulty = difficulty
   if (category && category !== "all") where.category = category
 
@@ -340,7 +340,7 @@ async function ChallengeList({
     id: c.id,
     title: c.title,
     description: c.description,
-    difficulty: c.difficulty,
+    difficulty: c.difficulty as Difficulty,
     category: c.category,
     xpReward: c.xpReward,
     timeEstimate: c.timeEstimate,
@@ -348,10 +348,6 @@ async function ChallengeList({
       ? { status: c.progress[0].status, xpEarned: c.progress[0].xpEarned }
       : null,
   }))
-
-  const completedCount = mapped.filter(
-    (c) => c.userProgress?.status === "completed"
-  ).length
 
   if (mapped.length === 0) {
     return (
@@ -462,8 +458,7 @@ async function HeaderProgress({
 
   const userId = session.user.id
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const where: Record<string, any> = { isPublished: true }
+  const where: Record<string, unknown> = { isPublished: true }
   if (difficulty && difficulty !== "all") where.difficulty = difficulty
   if (category && category !== "all") where.category = category
 

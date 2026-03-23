@@ -1,12 +1,12 @@
 'use server'
 
-import prisma from '@/server/db'
+import { prisma } from '@/server/db'
 import { auth } from '@/lib/auth'
 import { executeCode } from '@/lib/code-executor'
-import type { TestCase, ExecutionResult } from '@/lib/types'
+import type { Difficulty, TestCase, ExecutionResult } from '@/lib/types'
 import { updateStreak } from './streak'
 
-const DIFFICULTY_MULTIPLIER: Record<string, number> = {
+const DIFFICULTY_MULTIPLIER: Record<Difficulty, number> = {
   easy: 1,
   medium: 1.5,
   hard: 2.5,
@@ -14,7 +14,7 @@ const DIFFICULTY_MULTIPLIER: Record<string, number> = {
 
 function calculateXp(
   xpReward: number,
-  difficulty: string,
+  difficulty: Difficulty,
   attempts: number
 ): number {
   const multiplier = DIFFICULTY_MULTIPLIER[difficulty] ?? 1
@@ -82,7 +82,7 @@ export async function submitSolution(
 
       const xpAwarded = calculateXp(
         challenge.xpReward,
-        challenge.difficulty,
+        challenge.difficulty as Difficulty,
         currentAttempts
       )
 

@@ -1,6 +1,5 @@
 import { cn } from "@/lib/utils"
-
-type Difficulty = "easy" | "medium" | "hard"
+import type { Difficulty } from "@/lib/types"
 
 const difficultyConfig: Record<
   Difficulty,

@@ -12,7 +12,7 @@ import {
   Flame,
   Zap,
 } from "lucide-react"
-import prisma from "@/server/db"
+import { prisma } from "@/server/db"
 import { SidebarWrapper } from "@/components/sidebar-wrapper"
 
 // ---------------------------------------------------------------------------
@@ -35,8 +35,7 @@ async function SidebarStreak({ userId }: { userId: string }) {
       where: { userId },
       select: { currentStreak: true },
     })
-    currentStreak =
-      ((streak as Record<string, unknown>)?.currentStreak as number) ?? 0
+    currentStreak = streak?.currentStreak ?? 0
   } catch {
     // Streak table may not exist yet
   }
@@ -81,8 +80,7 @@ async function SidebarUser() {
         where: { id: session.user.id },
         select: { totalXp: true },
       })
-      totalXp =
-        ((user as Record<string, unknown>)?.totalXp as number) ?? 0
+      totalXp = user?.totalXp ?? 0
     }
   } catch {
     // totalXp field may not exist yet

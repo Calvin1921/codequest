@@ -30,8 +30,9 @@ export function useActionStateExtended<T>(
       if (options.optimisticUpdate) {
         setOptimisticData(options.optimisticUpdate(optimisticData, formData))
       }
-      
-      ;(formAction(formData) as any)?.then?.((result: any) => {
+
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any -- useActionState return type does not expose .then()
+      ;(formAction(formData) as any)?.then?.((result: ActionState<T>) => {
         if (result.success && result.data && options.onSuccess) {
           options.onSuccess(result.data)
         } else if (result.error && options.onError) {

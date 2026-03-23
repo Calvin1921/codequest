@@ -12,7 +12,7 @@ import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { ChevronLeft, Play, RotateCcw } from 'lucide-react'
 import { cn } from '@/lib/utils'
-import type { ExecutionResult } from '@/lib/types'
+import type { Difficulty, ExecutionResult } from '@/lib/types'
 import { submitSolution } from '@/server/actions/progress'
 import type { SubmitResult } from '@/server/actions/progress'
 import { ChallengeEditor, type ChallengeEditorHandle } from '@/components/challenge-editor'
@@ -29,7 +29,7 @@ export interface ChallengeSolveProps {
     title: string
     description: string
     problemStatement: string
-    difficulty: string
+    difficulty: Difficulty
     category: string
     starterCode: string
     testCases: string
@@ -301,7 +301,7 @@ export default function ChallengeSolveClient({
               {challenge.title}
             </span>
             <DifficultyBadge
-              difficulty={challenge.difficulty as 'easy' | 'medium' | 'hard'}
+              difficulty={challenge.difficulty}
             />
             {isSolved && (
               <span className="flex items-center gap-1 rounded-full bg-green-500/10 border border-green-500/20 px-2 py-0.5 text-xs font-medium text-green-400">

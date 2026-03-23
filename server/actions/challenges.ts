@@ -1,10 +1,11 @@
 'use server'
 
-import prisma from '@/server/db'
+import { prisma } from '@/server/db'
 import { auth } from '@/lib/auth'
+import type { Difficulty } from '@/lib/types'
 
 export interface ChallengeFilters {
-  difficulty?: 'easy' | 'medium' | 'hard'
+  difficulty?: Difficulty
   category?: 'javascript' | 'typescript' | 'algorithms' | 'react'
   status?: 'completed' | 'in_progress' | 'not_started'
 }

@@ -1,6 +1,7 @@
 import { auth } from "@/lib/auth"
-import prisma from "@/server/db"
+import { prisma } from "@/server/db"
 import { redirect, notFound } from "next/navigation"
+import type { Difficulty } from "@/lib/types"
 import ChallengeSolveClient from "./challenge-solve-client"
 
 export default async function ChallengeDetailPage({
@@ -37,7 +38,7 @@ export default async function ChallengeDetailPage({
         title: challenge.title,
         description: challenge.description,
         problemStatement: challenge.problemStatement,
-        difficulty: challenge.difficulty,
+        difficulty: challenge.difficulty as Difficulty,
         category: challenge.category,
         starterCode: challenge.starterCode,
         testCases: challenge.testCases,

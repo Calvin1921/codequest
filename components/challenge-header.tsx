@@ -1,7 +1,8 @@
 import { DifficultyBadge } from '@/components/difficulty-badge'
+import type { Difficulty } from '@/lib/types'
 
 interface ChallengeHeaderProps {
-  challenge: { title: string; difficulty: string; category: string; xpReward: number }
+  challenge: { title: string; difficulty: Difficulty; category: string; xpReward: number }
   isSolved: boolean
   xpEarned?: number
   compact?: boolean
@@ -15,7 +16,7 @@ export function ChallengeHeader({ challenge, isSolved, xpEarned, compact }: Chal
           {challenge.title}
         </h1>
         <DifficultyBadge
-          difficulty={challenge.difficulty as 'easy' | 'medium' | 'hard'}
+          difficulty={challenge.difficulty}
         />
       </div>
       <div className="flex items-center gap-3">

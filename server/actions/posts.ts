@@ -1,7 +1,7 @@
 'use server'
 
 import { auth } from "@/lib/auth"
-import prisma from "@/server/db"
+import { prisma } from "@/server/db"
 import { revalidatePath } from "next/cache"
 import { z } from "zod"
 
@@ -11,9 +11,16 @@ const createPostSchema = z.object({
   published: z.boolean().default(false),
 })
 
-export async function createPost(prevState: any, formData: FormData) {
+interface PostActionState {
+  success: boolean
+  error?: string
+  errors?: Record<string, string[]>
+  data?: unknown
+}
+
+export async function createPost(prevState: PostActionState, formData: FormData) {
   const session = await auth()
-  
+
   if (!session?.user?.id) {
     return { success: false, error: "Unauthorized" }
   }
@@ -52,7 +59,7 @@ export async function createPost(prevState: any, formData: FormData) {
 
 export async function updatePost(id: string, formData: FormData) {
   const session = await auth()
-  
+
   if (!session?.user?.id) {
     return { success: false, error: "Unauthorized" }
   }
@@ -98,7 +105,7 @@ export async function updatePost(id: string, formData: FormData) {
 
 export async function deletePost(id: string) {
   const session = await auth()
-  
+
   if (!session?.user?.id) {
     return { success: false, error: "Unauthorized" }
   }

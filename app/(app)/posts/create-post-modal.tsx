@@ -21,7 +21,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 
 function SubmitButton() {
   const { pending } = useFormStatus()
-  
+
   return (
     <Button type="submit" disabled={pending}>
       {pending ? 'Creating...' : 'Create Post'}
@@ -35,11 +35,10 @@ interface CreatePostModalProps {
 
 export function CreatePostModal({ isModal = false }: CreatePostModalProps) {
   const router = useRouter()
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const [state, formAction] = useActionState(createPost as any, {
+  const [state, formAction] = useActionState(createPost, {
     success: false,
     error: '',
-    errors: {} as { title?: string[]; content?: string[]; published?: string[] },
+    errors: {} as Record<string, string[]>,
   })
 
   useEffect(() => {
