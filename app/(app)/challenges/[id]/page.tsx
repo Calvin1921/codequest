@@ -31,31 +31,29 @@ export default async function ChallengeDetailPage({
   const userProgress = challenge.progress[0] ?? null
 
   return (
-    <div className="-mx-4 -mt-6 -mb-6 sm:-mx-6 lg:-mx-8 lg:-mt-8 lg:-mb-8 max-w-none">
-      <ChallengeSolveClient
-        challenge={{
-          id: challenge.id,
-          title: challenge.title,
-          description: challenge.description,
-          problemStatement: challenge.problemStatement,
-          difficulty: challenge.difficulty,
-          category: challenge.category,
-          starterCode: challenge.starterCode,
-          testCases: challenge.testCases,
-          hints: challenge.hints,
-          xpReward: challenge.xpReward,
-        }}
-        progress={
-          userProgress
-            ? {
-                status: userProgress.status,
-                submittedCode: userProgress.submittedCode,
-                attempts: userProgress.attempts,
-                xpEarned: userProgress.xpEarned,
-              }
-            : undefined
-        }
-      />
-    </div>
+    <ChallengeSolveClient
+      challenge={{
+        id: challenge.id,
+        title: challenge.title,
+        description: challenge.description,
+        problemStatement: challenge.problemStatement,
+        difficulty: challenge.difficulty,
+        category: challenge.category,
+        starterCode: challenge.starterCode,
+        testCases: challenge.testCases,
+        hints: challenge.hints,
+        xpReward: challenge.xpReward,
+      }}
+      progress={
+        userProgress
+          ? {
+              status: userProgress.status,
+              submittedCode: userProgress.submittedCode,
+              attempts: userProgress.attempts,
+              xpEarned: userProgress.xpEarned,
+            }
+          : undefined
+      }
+    />
   )
 }

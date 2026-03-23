@@ -420,6 +420,17 @@
   animation: flamePulse 1.5s ease-in-out infinite;
 }
 
+/* ============================================
+   Solve Page — Full-screen IDE mode
+   Hides sidebar, header, tab bar when active
+   ============================================ */
+.solve-page-active aside { display: none !important; }
+.solve-page-active main { padding-left: 0 !important; padding: 0 !important; min-height: auto !important; }
+.solve-page-active .mobile-header,
+.solve-page-active header.sticky { display: none !important; }
+.solve-page-active nav[class*="fixed bottom-0"] { display: none !important; }
+.solve-page-active main > div { padding: 0 !important; }
+
 /* Staggered animation delays for lists */
 .animate-stagger > *:nth-child(1) { animation-delay: 0ms; }
 .animate-stagger > *:nth-child(2) { animation-delay: 60ms; }
