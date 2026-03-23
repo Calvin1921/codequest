@@ -196,7 +196,7 @@ export default function ChallengeSolveClient({
 
             {/* Description */}
             <div>
-              <h3 className="mb-3 text-sm font-semibold uppercase tracking-wider text-neutral-400">
+              <h3 className="text-sm font-bold uppercase tracking-widest text-zinc-500 mb-4">
                 Description
               </h3>
               <p className="text-[15px] leading-7 text-neutral-300">
@@ -206,7 +206,7 @@ export default function ChallengeSolveClient({
 
             {/* Problem statement */}
             <div>
-              <h3 className="mb-3 text-sm font-semibold uppercase tracking-wider text-neutral-400">
+              <h3 className="text-sm font-bold uppercase tracking-widest text-zinc-500 mb-4">
                 Problem
               </h3>
               <div className="rounded-lg border border-neutral-800 bg-neutral-900/60 p-5">
@@ -220,7 +220,7 @@ export default function ChallengeSolveClient({
             {hints.length > 0 && (
               <div>
                 <div className="mb-3 flex items-center justify-between">
-                  <h3 className="text-sm font-semibold uppercase tracking-wider text-neutral-400">
+                  <h3 className="text-sm font-bold uppercase tracking-widest text-zinc-500">
                     Hints ({hintsRevealed}/{hints.length})
                   </h3>
                   {hintsRevealed < hints.length && (
@@ -256,11 +256,11 @@ export default function ChallengeSolveClient({
 
         {/* ===== Editor panel (right) ===== */}
         <section
-          className={`flex min-h-[60vh] w-full flex-col lg:min-h-0 lg:w-[58%] ${
+          className={`flex w-full flex-col lg:min-h-0 lg:w-[58%] ${
             mobileTab === 'problem' ? 'hidden lg:flex' : 'flex'
           }`}
         >
-          <div className="min-h-0 flex-1">
+          <div className="min-h-[400px] h-[50vh] lg:h-auto lg:min-h-0 lg:flex-1">
             <ChallengeEditor
               starterCode={challenge.starterCode}
               language="javascript"
