@@ -1,4 +1,3 @@
-import { Badge } from "@/components/ui/badge"
 import { cn } from "@/lib/utils"
 
 type Difficulty = "easy" | "medium" | "hard"
@@ -9,18 +8,15 @@ const difficultyConfig: Record<
 > = {
   easy: {
     label: "Easy",
-    className:
-      "bg-green-100 text-green-800 border-green-200 dark:bg-green-900/30 dark:text-green-400 dark:border-green-800",
+    className: "bg-green-500/10 text-green-400 border-green-500/20",
   },
   medium: {
     label: "Medium",
-    className:
-      "bg-amber-100 text-amber-800 border-amber-200 dark:bg-amber-900/30 dark:text-amber-400 dark:border-amber-800",
+    className: "bg-amber-500/10 text-amber-400 border-amber-500/20",
   },
   hard: {
     label: "Hard",
-    className:
-      "bg-red-100 text-red-800 border-red-200 dark:bg-red-900/30 dark:text-red-400 dark:border-red-800",
+    className: "bg-rose-500/10 text-rose-400 border-rose-500/20",
   },
 }
 
@@ -36,8 +32,14 @@ export function DifficultyBadge({
   const config = difficultyConfig[difficulty]
 
   return (
-    <Badge variant="outline" className={cn(config.className, className)}>
+    <span
+      className={cn(
+        "inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold",
+        config.className,
+        className
+      )}
+    >
       {config.label}
-    </Badge>
+    </span>
   )
 }
