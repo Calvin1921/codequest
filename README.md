@@ -8,6 +8,29 @@
 ![Prisma](https://img.shields.io/badge/Prisma-6-2D3748?logo=prisma)
 ![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-4-06B6D4?logo=tailwindcss)
 
+## Screenshots
+
+### Landing Page
+![Landing Page](/public/screenshots/landing.png)
+
+### Dashboard
+![Dashboard](/public/screenshots/dashboard.png)
+
+### Challenge List
+![Challenge List](/public/screenshots/challenges.png)
+
+### Challenge Solve Page (LeetCode-style IDE)
+![Solve Page](/public/screenshots/solve-page.png)
+
+### Registration
+![Register](/public/screenshots/register.png)
+
+### Mobile Views
+<p float="left">
+  <img src="/public/screenshots/mobile-challenges.png" width="250" alt="Mobile Challenges" />
+  <img src="/public/screenshots/mobile-solve.png" width="250" alt="Mobile Solve" />
+</p>
+
 ## Features
 
 - **Interactive Coding Challenges** — Solve problems in a LeetCode-style IDE with Monaco Editor, markdown problem statements, and expandable hints
