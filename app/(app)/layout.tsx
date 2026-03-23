@@ -55,6 +55,9 @@ export default async function AppLayout({
                 <Link href="/dashboard">Home</Link>
               </Button>
               <Button variant="ghost" asChild>
+                <Link href="/challenges">Challenges</Link>
+              </Button>
+              <Button variant="ghost" asChild>
                 <Link href="/posts">Posts</Link>
               </Button>
               <Button variant="ghost" asChild>
