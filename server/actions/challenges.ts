@@ -9,6 +9,7 @@ export interface ChallengeFilters {
   status?: 'completed' | 'in_progress' | 'not_started'
 }
 
+// Available for future API routes / client components
 export async function getChallenges(filters?: ChallengeFilters) {
   const session = await auth()
   const userId = session?.user?.id
@@ -70,6 +71,7 @@ export async function getChallenges(filters?: ChallengeFilters) {
   return result
 }
 
+// Available for future API routes / client components
 export async function getChallenge(id: string) {
   const session = await auth()
   const userId = session?.user?.id

@@ -2,6 +2,13 @@
 
 import prisma from '@/server/db'
 
+// NOTE: All streak dates use UTC (via toISOString). This means a user's "day"
+// boundary depends on their relationship to UTC, not their local timezone.
+// For example, a user at UTC-8 completing a challenge at 11pm local time
+// would have it recorded as the next UTC day.
+// TODO: Add timezone support — accept the user's timezone and compute
+// "today"/"yesterday" relative to their local time.
+
 function getTodayISO(): string {
   return new Date().toISOString().split('T')[0]
 }
@@ -18,6 +25,10 @@ export interface StreakInfo {
   lastActiveDate: string | null
   freezesLeft: number
   isActiveToday: boolean
+  /** True when the streak would be broken without a freeze.
+   *  The freeze is not consumed until `updateStreak` is called.
+   *  The UI can use this to show "Freeze will be used today". */
+  freezeNeeded: boolean
 }
 
 export async function getStreak(userId: string): Promise<StreakInfo> {
@@ -45,6 +56,7 @@ export async function getStreak(userId: string): Promise<StreakInfo> {
       lastActiveDate: null,
       freezesLeft: 1,
       isActiveToday: false,
+      freezeNeeded: false,
     }
   }
 
@@ -61,6 +73,7 @@ export async function getStreak(userId: string): Promise<StreakInfo> {
         lastActiveDate: streak.lastActiveDate,
         freezesLeft: streak.freezesLeft,
         isActiveToday: false,
+        freezeNeeded: true,
       }
     } else {
       // Streak is broken — reset
@@ -75,6 +88,7 @@ export async function getStreak(userId: string): Promise<StreakInfo> {
         lastActiveDate: updated.lastActiveDate,
         freezesLeft: 0,
         isActiveToday: false,
+        freezeNeeded: false,
       }
     }
   }
@@ -85,6 +99,7 @@ export async function getStreak(userId: string): Promise<StreakInfo> {
     lastActiveDate: streak.lastActiveDate,
     freezesLeft: streak.freezesLeft,
     isActiveToday,
+    freezeNeeded: false,
   }
 }
 
@@ -113,6 +128,7 @@ export async function updateStreak(userId: string): Promise<StreakInfo> {
       lastActiveDate: today,
       freezesLeft: 1,
       isActiveToday: true,
+      freezeNeeded: false,
     }
   }
 
@@ -124,6 +140,7 @@ export async function updateStreak(userId: string): Promise<StreakInfo> {
       lastActiveDate: today,
       freezesLeft: streak.freezesLeft,
       isActiveToday: true,
+      freezeNeeded: false,
     }
   }
 
@@ -160,5 +177,6 @@ export async function updateStreak(userId: string): Promise<StreakInfo> {
     lastActiveDate: today,
     freezesLeft: updated.freezesLeft,
     isActiveToday: true,
+    freezeNeeded: false,
   }
 }

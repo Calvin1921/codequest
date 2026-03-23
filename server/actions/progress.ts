@@ -64,33 +64,28 @@ export async function submitSolution(
   // Execute user code against test cases
   const execution = executeCode(userCode, testCases)
 
-  // Get or create progress record
-  let progress = await prisma.userProgress.findUnique({
-    where: {
-      userId_challengeId: {
-        userId,
-        challengeId,
-      },
-    },
-  })
-
-  // If already completed, return without awarding XP again
-  if (progress?.status === 'completed') {
-    return { execution, xpAwarded: 0, alreadyCompleted: true }
-  }
-
-  const currentAttempts = (progress?.attempts ?? 0) + 1
-
   if (execution.passed) {
-    // Calculate XP
-    const xpAwarded = calculateXp(
-      challenge.xpReward,
-      challenge.difficulty,
-      currentAttempts
-    )
+    // Use a transaction to check completion status AND award XP atomically.
+    // This prevents a race condition where concurrent submissions could
+    // both pass the "already completed" check and award double XP.
+    const result = await prisma.$transaction(async (tx) => {
+      const existingProgress = await tx.userProgress.findUnique({
+        where: { userId_challengeId: { userId, challengeId } },
+      })
 
-    // Use a transaction to update progress, user XP, and streak atomically
-    await prisma.$transaction(async (tx) => {
+      // Already completed — skip XP award
+      if (existingProgress?.status === 'completed') {
+        return { xpAwarded: 0, alreadyCompleted: true }
+      }
+
+      const currentAttempts = (existingProgress?.attempts ?? 0) + 1
+
+      const xpAwarded = calculateXp(
+        challenge.xpReward,
+        challenge.difficulty,
+        currentAttempts
+      )
+
       await tx.userProgress.upsert({
         where: {
           userId_challengeId: { userId, challengeId },
@@ -119,14 +114,25 @@ export async function submitSolution(
           totalXp: { increment: xpAwarded },
         },
       })
+
+      return { xpAwarded, alreadyCompleted: false }
     })
+
+    if (result.alreadyCompleted) {
+      return { execution, xpAwarded: 0, alreadyCompleted: true }
+    }
 
     // Update streak (outside transaction since it has its own logic)
     await updateStreak(userId)
 
-    return { execution, xpAwarded, alreadyCompleted: false }
+    return { execution, xpAwarded: result.xpAwarded, alreadyCompleted: false }
   } else {
     // Tests failed — update progress to track attempt
+    const existingProgress = await prisma.userProgress.findUnique({
+      where: { userId_challengeId: { userId, challengeId } },
+    })
+    const currentAttempts = (existingProgress?.attempts ?? 0) + 1
+
     await prisma.userProgress.upsert({
       where: {
         userId_challengeId: { userId, challengeId },

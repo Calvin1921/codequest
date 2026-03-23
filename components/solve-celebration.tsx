@@ -1,6 +1,6 @@
 "use client"
 
-import { useCallback, useEffect, useRef, useState } from "react"
+import { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Trophy, ArrowRight } from "lucide-react"
 
@@ -11,6 +11,15 @@ interface SolveCelebrationProps {
   onDismiss: () => void
 }
 
+const CONFETTI_COLORS = [
+  "#f43f5e",
+  "#3b82f6",
+  "#22c55e",
+  "#eab308",
+  "#a855f7",
+  "#f97316",
+]
+
 export function SolveCelebration({
   xpAwarded,
   streak,
@@ -20,6 +29,21 @@ export function SolveCelebration({
   const [displayXp, setDisplayXp] = useState(0)
   const [visible, setVisible] = useState(true)
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+
+  // Generate confetti positions once on mount to avoid hydration mismatches
+  // from calling Math.random() during render
+  const confettiPieces = useMemo(
+    () =>
+      Array.from({ length: 30 }, (_, i) => ({
+        color: CONFETTI_COLORS[i % CONFETTI_COLORS.length],
+        left: Math.random() * 100,
+        delay: Math.random() * 2,
+        duration: 2 + Math.random() * 2,
+        size: 6 + Math.random() * 8,
+        isRound: Math.random() > 0.5,
+      })),
+    []
+  )
 
   // XP count-up animation
   useEffect(() => {
@@ -74,60 +98,22 @@ export function SolveCelebration({
 
   return (
     <>
-      {/* Inline confetti keyframes */}
-      <style>{`
-        @keyframes confetti-fall {
-          0% { transform: translateY(-100vh) rotate(0deg); opacity: 1; }
-          100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
-        }
-        @keyframes confetti-shake {
-          0%, 100% { transform: translateX(0); }
-          25% { transform: translateX(-10px); }
-          75% { transform: translateX(10px); }
-        }
-        .confetti-piece {
-          position: fixed;
-          top: -10px;
-          width: 10px;
-          height: 10px;
-          z-index: 60;
-          animation: confetti-fall linear forwards,
-                     confetti-shake 0.5s ease-in-out infinite;
-        }
-      `}</style>
-
       {/* Confetti pieces */}
-      {Array.from({ length: 30 }).map((_, i) => {
-        const colors = [
-          "#f43f5e",
-          "#3b82f6",
-          "#22c55e",
-          "#eab308",
-          "#a855f7",
-          "#f97316",
-        ]
-        const color = colors[i % colors.length]
-        const left = `${Math.random() * 100}%`
-        const delay = `${Math.random() * 2}s`
-        const duration = `${2 + Math.random() * 2}s`
-        const size = `${6 + Math.random() * 8}px`
-
-        return (
-          <div
-            key={i}
-            className="confetti-piece"
-            style={{
-              left,
-              width: size,
-              height: size,
-              backgroundColor: color,
-              borderRadius: Math.random() > 0.5 ? "50%" : "0",
-              animationDelay: delay,
-              animationDuration: duration,
-            }}
-          />
-        )
-      })}
+      {confettiPieces.map((piece, i) => (
+        <div
+          key={i}
+          className="confetti-piece"
+          style={{
+            left: `${piece.left}%`,
+            width: `${piece.size}px`,
+            height: `${piece.size}px`,
+            backgroundColor: piece.color,
+            borderRadius: piece.isRound ? "50%" : "0",
+            animationDelay: `${piece.delay}s`,
+            animationDuration: `${piece.duration}s`,
+          }}
+        />
+      ))}
 
       {/* Overlay */}
       <div
