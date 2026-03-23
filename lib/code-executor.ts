@@ -81,29 +81,8 @@ export function executeCode(
       // Create a fresh sandboxed context for each test case
       const sandbox: Record<string, unknown> = {
         console: { log: () => {}, error: () => {}, warn: () => {} },
-        Array,
-        Object,
-        String,
-        Number,
-        Boolean,
-        Map,
-        Set,
-        JSON,
-        Math,
-        Date,
-        RegExp,
-        Error,
-        TypeError,
-        RangeError,
-        parseInt,
-        parseFloat,
-        isNaN,
-        isFinite,
-        undefined,
-        null: null,
-        Infinity,
-        NaN,
       }
+      // vm.createContext provides isolated builtins automatically
 
       const context = vm.createContext(sandbox)
 
@@ -142,7 +121,7 @@ export function executeCode(
         )
 
         result.actual = callScript.runInContext(context, {
-    
+          timeout: EXECUTION_TIMEOUT_MS,
         })
         result.passed = deepEqual(result.actual, expectedResults)
       } else if (typeof fn === 'function') {
