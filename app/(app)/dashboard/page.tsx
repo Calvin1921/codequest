@@ -148,7 +148,7 @@ async function ChallengeDashboard() {
 
   return (
     <div className="space-y-6">
-      {/* ── Stats Cards ─────────────────────────────────────────── */}
+      {/* Stats Cards */}
       <div className="grid gap-4 md:grid-cols-3">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
@@ -186,7 +186,7 @@ async function ChallengeDashboard() {
         </Card>
       </div>
 
-      {/* ── Daily Goal ──────────────────────────────────────────── */}
+      {/* Daily Goal */}
       <Card>
         <CardHeader className="pb-3">
           <CardTitle className="text-lg">Daily Goal</CardTitle>
@@ -194,7 +194,6 @@ async function ChallengeDashboard() {
         </CardHeader>
         <CardContent>
           {(() => {
-            // Check if user completed at least one challenge today
             const todayStr = new Date().toISOString().slice(0, 10)
             const completedToday = recentActivity.filter(
               (a) => a.status === "completed" && a.updatedAt.toISOString().slice(0, 10) === todayStr
@@ -217,7 +216,7 @@ async function ChallengeDashboard() {
         </CardContent>
       </Card>
 
-      {/* ── Continue Learning ───────────────────────────────────── */}
+      {/* Continue Learning */}
       <Card>
         <CardHeader className="pb-3">
           <CardTitle className="text-lg">Continue Learning</CardTitle>
@@ -257,7 +256,7 @@ async function ChallengeDashboard() {
         </CardContent>
       </Card>
 
-      {/* ── Recent Activity ─────────────────────────────────────── */}
+      {/* Recent Activity */}
       <Card>
         <CardHeader className="pb-3">
           <CardTitle className="text-lg">Recent Activity</CardTitle>
@@ -308,7 +307,7 @@ async function ChallengeDashboard() {
         </CardContent>
       </Card>
 
-      {/* ── Posts (deprioritized) ────────────────────────────────── */}
+      {/* Posts (deprioritized secondary section) */}
       <Suspense
         fallback={
           <Card>
@@ -398,7 +397,7 @@ export default async function DashboardPage() {
 
   return (
     <div>
-      {/* ── Header ───────────────────────────────────────────────── */}
+      {/* Header */}
       <div className="mb-8 flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold">Dashboard</h1>
@@ -412,7 +411,7 @@ export default async function DashboardPage() {
         )}
       </div>
 
-      {/* ── Main Content ─────────────────────────────────────────── */}
+      {/* Main Content */}
       <Suspense
         fallback={
           <div className="space-y-4">
