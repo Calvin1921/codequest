@@ -66,6 +66,7 @@ export async function checkRateLimit(
   }
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- generic HOF requires any for argument/return flexibility
 export function withRateLimit<T extends (...args: any[]) => Promise<any>>(
   fn: T,
   type: keyof typeof rateLimiters = 'api'

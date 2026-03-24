@@ -48,7 +48,7 @@ export const updateProfile = withRateLimit(
       }
 
       const updateData = Object.fromEntries(
-        Object.entries(validatedFields.data).filter(([_, v]) => v !== undefined)
+        Object.entries(validatedFields.data).filter(([, v]) => v !== undefined)
       )
 
       if (Object.keys(updateData).length === 0) {
@@ -82,7 +82,7 @@ export const updateProfile = withRateLimit(
 )
 
 export const deleteAccount = withRateLimit(
-  async (prevState: ProfileState, formData: FormData): Promise<ProfileState> => {
+  async (_prevState: ProfileState, _formData: FormData): Promise<ProfileState> => {
     try {
       const session = await auth()
 

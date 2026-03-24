@@ -455,7 +455,7 @@ async function verifyAll() {
   let passed = 0
   let total = 0
 
-  const check = (ok: boolean, label?: string) => {
+  const check = (ok: boolean, _label?: string) => {
     total++
     if (ok) passed++
     return ok
