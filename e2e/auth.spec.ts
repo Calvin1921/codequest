@@ -35,7 +35,7 @@ test.describe('Authentication Flow', () => {
     
     await page.waitForURL('/dashboard')
     
-    await page.click('button:has-text("Sign out")')
+    await page.click('button:has-text("Sign Out")')
     
     await page.waitForURL('/')
     await expect(page).toHaveURL('/')
@@ -49,7 +49,7 @@ test.describe('Authentication Flow', () => {
     
     await page.click('button[type="submit"]')
     
-    await expect(page.locator('text=Invalid credentials')).toBeVisible()
+    await expect(page.locator('text=Invalid email or password')).toBeVisible()
     await expect(page).toHaveURL('/login')
   })
 })

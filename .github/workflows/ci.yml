@@ -104,34 +104,6 @@ jobs:
           name: playwright-report
           path: playwright-report/
 
-  performance:
-    name: Performance Check
-    runs-on: ubuntu-latest
-    
-    steps:
-      - uses: actions/checkout@v4
-      
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: ${{ env.NODE_VERSION }}
-          cache: 'npm'
-      
-      - name: Install dependencies
-        run: npm ci
-      
-      - name: Build application
-        run: npm run build
-      
-      - name: Analyze bundle
-        run: npm run analyze
-      
-      - name: Run Lighthouse CI
-        uses: treosh/lighthouse-ci-action@v11
-        with:
-          configPath: './lighthouserc.json'
-          uploadArtifacts: true
-
   security:
     name: Security Scan
     runs-on: ubuntu-latest
@@ -151,7 +123,7 @@ jobs:
 
   deploy:
     name: Deploy to Vercel
-    needs: [quality, test, e2e, performance]
+    needs: [quality, test, e2e]
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main'
     

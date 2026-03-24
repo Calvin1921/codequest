@@ -155,32 +155,3 @@ export async function submitSolution(
   }
 }
 
-export async function saveDraft(
-  challengeId: string,
-  userCode: string
-): Promise<{ success: boolean }> {
-  const session = await auth()
-  if (!session?.user?.id) {
-    throw new Error('You must be signed in to save drafts')
-  }
-
-  const userId = session.user.id
-
-  await prisma.userProgress.upsert({
-    where: {
-      userId_challengeId: { userId, challengeId },
-    },
-    update: {
-      submittedCode: userCode,
-      status: 'in_progress',
-    },
-    create: {
-      userId,
-      challengeId,
-      submittedCode: userCode,
-      status: 'in_progress',
-    },
-  })
-
-  return { success: true }
-}

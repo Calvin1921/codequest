@@ -6,7 +6,6 @@ import { Suspense } from "react"
 import {
   LayoutDashboard,
   Code2,
-  FileText,
   Settings,
   LogOut,
   Flame,
@@ -21,7 +20,6 @@ import { SidebarWrapper } from "@/components/sidebar-wrapper"
 const navItems = [
   { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
   { href: "/challenges", label: "Challenges", icon: Code2 },
-  { href: "/posts", label: "Posts", icon: FileText },
   { href: "/settings", label: "Settings", icon: Settings },
 ] as const
 
@@ -257,10 +255,8 @@ function MobileHeader({ userId }: { userId: string | undefined }) {
 // ---------------------------------------------------------------------------
 export default async function AppLayout({
   children,
-  modal,
 }: {
   children: React.ReactNode
-  modal: React.ReactNode
 }) {
   const session = await auth()
 
@@ -278,7 +274,6 @@ export default async function AppLayout({
     >
       <div className="px-4 py-6 sm:px-6 lg:px-8 lg:py-8">
         {children}
-        {modal}
       </div>
     </SidebarWrapper>
   )

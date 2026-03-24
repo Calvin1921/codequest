@@ -7,7 +7,6 @@ async function main() {
   await prisma.userProgress.deleteMany()
   await prisma.streak.deleteMany()
   await prisma.challenge.deleteMany()
-  await prisma.post.deleteMany()
   await prisma.account.deleteMany()
   await prisma.session.deleteMany()
   await prisma.user.deleteMany()
@@ -19,26 +18,6 @@ async function main() {
       name: 'Alice Johnson',
       emailVerified: new Date(),
       totalXp: 0,
-      posts: {
-        create: [
-          {
-            title: 'Getting Started with Next.js 15',
-            content: 'Next.js 15 brings exciting new features including...',
-            published: true,
-          },
-          {
-            title: 'React Server Components Deep Dive',
-            content:
-              'Server Components are a game changer for React applications...',
-            published: true,
-          },
-          {
-            title: 'Draft: Optimizing Database Queries',
-            content: 'This is a work in progress...',
-            published: false,
-          },
-        ],
-      },
     },
   })
 
@@ -48,15 +27,6 @@ async function main() {
       name: 'Bob Smith',
       emailVerified: new Date(),
       totalXp: 0,
-      posts: {
-        create: [
-          {
-            title: 'Understanding Server Actions',
-            content: 'Server Actions in Next.js allow you to...',
-            published: true,
-          },
-        ],
-      },
     },
   })
 
