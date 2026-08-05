@@ -117,7 +117,7 @@ jobs:
       - name: Run dependency check
         uses: dependency-check/Dependency-Check_Action@main
         with:
-          project: "nextjs-app"
+          project: "codequest"
           path: "."
           format: "HTML"
 
