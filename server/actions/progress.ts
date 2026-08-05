@@ -1,10 +1,10 @@
-'use server'
+"use server"
 
-import { prisma } from '@/server/db'
-import { auth } from '@/lib/auth'
-import { executeCode } from '@/lib/code-executor'
-import type { Difficulty, TestCase, ExecutionResult } from '@/lib/types'
-import { updateStreak } from './streak'
+import { prisma } from "@/server/db"
+import { auth } from "@/lib/auth"
+import { executeCode } from "@/lib/code-executor"
+import type { Difficulty, TestCase, ExecutionResult } from "@/lib/types"
+import { updateStreak } from "./streak"
 
 const DIFFICULTY_MULTIPLIER: Record<Difficulty, number> = {
   easy: 1,
@@ -12,11 +12,7 @@ const DIFFICULTY_MULTIPLIER: Record<Difficulty, number> = {
   hard: 2.5,
 }
 
-function calculateXp(
-  xpReward: number,
-  difficulty: Difficulty,
-  attempts: number
-): number {
+function calculateXp(xpReward: number, difficulty: Difficulty, attempts: number): number {
   const multiplier = DIFFICULTY_MULTIPLIER[difficulty] ?? 1
   const attemptBonus = Math.max(0, 50 - attempts * 10)
   return Math.floor(xpReward * multiplier) + attemptBonus
@@ -28,13 +24,10 @@ export interface SubmitResult {
   alreadyCompleted: boolean
 }
 
-export async function submitSolution(
-  challengeId: string,
-  userCode: string
-): Promise<SubmitResult> {
+export async function submitSolution(challengeId: string, userCode: string): Promise<SubmitResult> {
   const session = await auth()
   if (!session?.user?.id) {
-    throw new Error('You must be signed in to submit solutions')
+    throw new Error("You must be signed in to submit solutions")
   }
 
   const userId = session.user.id
@@ -50,7 +43,7 @@ export async function submitSolution(
   })
 
   if (!challenge) {
-    throw new Error('Challenge not found')
+    throw new Error("Challenge not found")
   }
 
   // Parse test cases
@@ -58,7 +51,7 @@ export async function submitSolution(
   try {
     testCases = JSON.parse(challenge.testCases)
   } catch {
-    throw new Error('Invalid test cases configuration')
+    throw new Error("Invalid test cases configuration")
   }
 
   // Execute user code against test cases
@@ -74,7 +67,7 @@ export async function submitSolution(
       })
 
       // Already completed — skip XP award
-      if (existingProgress?.status === 'completed') {
+      if (existingProgress?.status === "completed") {
         return { xpAwarded: 0, alreadyCompleted: true }
       }
 
@@ -91,7 +84,7 @@ export async function submitSolution(
           userId_challengeId: { userId, challengeId },
         },
         update: {
-          status: 'completed',
+          status: "completed",
           submittedCode: userCode,
           attempts: currentAttempts,
           xpEarned: xpAwarded,
@@ -100,7 +93,7 @@ export async function submitSolution(
         create: {
           userId,
           challengeId,
-          status: 'completed',
+          status: "completed",
           submittedCode: userCode,
           attempts: currentAttempts,
           xpEarned: xpAwarded,
@@ -138,14 +131,14 @@ export async function submitSolution(
         userId_challengeId: { userId, challengeId },
       },
       update: {
-        status: 'in_progress',
+        status: "in_progress",
         submittedCode: userCode,
         attempts: currentAttempts,
       },
       create: {
         userId,
         challengeId,
-        status: 'in_progress',
+        status: "in_progress",
         submittedCode: userCode,
         attempts: currentAttempts,
       },
@@ -154,4 +147,3 @@ export async function submitSolution(
     return { execution, xpAwarded: 0, alreadyCompleted: false }
   }
 }
-

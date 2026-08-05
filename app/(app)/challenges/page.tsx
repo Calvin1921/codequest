@@ -7,13 +7,7 @@ import { cn } from "@/lib/utils"
 import type { Difficulty } from "@/lib/types"
 
 const DIFFICULTIES = ["all", "easy", "medium", "hard"] as const
-const CATEGORIES = [
-  "all",
-  "javascript",
-  "typescript",
-  "algorithms",
-  "react",
-] as const
+const CATEGORIES = ["all", "javascript", "typescript", "algorithms", "react"] as const
 
 const DIFFICULTY_PILL_COLORS: Record<string, string> = {
   all: "border-neutral-700 text-neutral-300 hover:bg-neutral-800",
@@ -39,13 +33,7 @@ const DIFFICULTY_SORT_ORDER: Record<string, number> = {
 // Progress Ring SVG
 // ---------------------------------------------------------------------------
 
-function ProgressRing({
-  completed,
-  total,
-}: {
-  completed: number
-  total: number
-}) {
+function ProgressRing({ completed, total }: { completed: number; total: number }) {
   const size = 56
   const strokeWidth = 4.5
   const radius = (size - strokeWidth) / 2
@@ -107,10 +95,10 @@ function FilterBar({
   }
 
   return (
-    <div className="rounded-xl border border-neutral-800 bg-card p-5">
+    <div className="bg-card rounded-xl border border-neutral-800 p-5">
       <div className="flex flex-col gap-5 md:flex-row md:items-center md:justify-between">
         <div className="flex flex-wrap items-center gap-2.5">
-          <span className="mr-1 text-xs font-semibold uppercase tracking-wider text-neutral-500">
+          <span className="mr-1 text-xs font-semibold tracking-wider text-neutral-500 uppercase">
             Difficulty
           </span>
           {DIFFICULTIES.map((d) => {
@@ -121,9 +109,7 @@ function FilterBar({
                 href={buildHref({ difficulty: d })}
                 className={cn(
                   "rounded-full border px-3.5 py-1.5 text-xs font-medium capitalize transition-colors",
-                  isActive
-                    ? DIFFICULTY_PILL_ACTIVE[d]
-                    : DIFFICULTY_PILL_COLORS[d]
+                  isActive ? DIFFICULTY_PILL_ACTIVE[d] : DIFFICULTY_PILL_COLORS[d]
                 )}
               >
                 {d}
@@ -132,7 +118,7 @@ function FilterBar({
           })}
         </div>
         <div className="flex flex-wrap items-center gap-2.5">
-          <span className="mr-1 text-xs font-semibold uppercase tracking-wider text-neutral-500">
+          <span className="mr-1 text-xs font-semibold tracking-wider text-neutral-500 uppercase">
             Category
           </span>
           {CATEGORIES.map((c) => {
@@ -189,17 +175,16 @@ function ChallengeCard({
     <Link href={`/challenges/${challenge.id}`} className="block">
       <div
         className={cn(
-          "group relative flex h-full flex-col rounded-xl border bg-card p-6 transition-all duration-200 cursor-pointer hover:-translate-y-0.5",
+          "group bg-card relative flex h-full cursor-pointer flex-col rounded-xl border p-6 transition-all duration-200 hover:-translate-y-0.5",
           difficultyGlow[challenge.difficulty],
-          isCompleted &&
-            "border-green-500/30 shadow-[0_0_12px_rgba(34,197,94,0.08)]",
+          isCompleted && "border-green-500/30 shadow-[0_0_12px_rgba(34,197,94,0.08)]",
           isInProgress && "border-amber-500/30",
           !isCompleted && !isInProgress && "border-neutral-800"
         )}
       >
         {/* Top row: category + difficulty badge */}
         <div className="mb-3 flex items-center justify-between">
-          <span className="rounded-md bg-neutral-800 px-2 py-0.5 text-[11px] font-medium capitalize text-neutral-400">
+          <span className="rounded-md bg-neutral-800 px-2 py-0.5 text-[11px] font-medium text-neutral-400 capitalize">
             {challenge.category}
           </span>
           <span
@@ -209,8 +194,7 @@ function ChallengeCard({
                 "border-green-500/20 bg-green-500/10 text-green-400",
               challenge.difficulty === "medium" &&
                 "border-amber-500/20 bg-amber-500/10 text-amber-400",
-              challenge.difficulty === "hard" &&
-                "border-rose-500/20 bg-rose-500/10 text-rose-400"
+              challenge.difficulty === "hard" && "border-rose-500/20 bg-rose-500/10 text-rose-400"
             )}
           >
             {challenge.difficulty}
@@ -218,9 +202,7 @@ function ChallengeCard({
         </div>
 
         {/* Title */}
-        <h3 className="mb-2 text-lg font-semibold leading-snug text-white">
-          {challenge.title}
-        </h3>
+        <h3 className="mb-2 text-lg leading-snug font-semibold text-white">{challenge.title}</h3>
 
         {/* Description */}
         <p className="mb-5 line-clamp-3 flex-1 text-sm leading-relaxed text-neutral-400">
@@ -233,7 +215,7 @@ function ChallengeCard({
         {/* Footer: XP + time + status */}
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-4">
-            <span className="font-mono text-base font-bold tabular-nums text-lime-500">
+            <span className="font-mono text-base font-bold text-lime-500 tabular-nums">
               {isCompleted
                 ? `${challenge.userProgress?.xpEarned ?? 0} XP`
                 : `${challenge.xpReward} XP`}
@@ -248,11 +230,7 @@ function ChallengeCard({
           <div className="flex items-center gap-1.5">
             {isCompleted && (
               <div className="inline-flex items-center gap-1.5 rounded-full border border-green-500/20 bg-green-500/10 px-2.5 py-1 text-green-400">
-                <svg
-                  className="size-3.5"
-                  viewBox="0 0 20 20"
-                  fill="currentColor"
-                >
+                <svg className="size-3.5" viewBox="0 0 20 20" fill="currentColor">
                   <path
                     fillRule="evenodd"
                     d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.857-9.809a.75.75 0 00-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 10-1.06 1.061l2.5 2.5a.75.75 0 001.137-.089l4-5.5z"
@@ -264,11 +242,7 @@ function ChallengeCard({
             )}
             {isInProgress && (
               <div className="inline-flex items-center gap-1.5 rounded-full border border-amber-500/20 bg-amber-500/10 px-2.5 py-1 text-amber-400">
-                <svg
-                  className="size-3.5"
-                  viewBox="0 0 20 20"
-                  fill="currentColor"
-                >
+                <svg className="size-3.5" viewBox="0 0 20 20" fill="currentColor">
                   <path
                     fillRule="evenodd"
                     d="M10 18a8 8 0 100-16 8 8 0 000 16zm.75-13a.75.75 0 00-1.5 0v5c0 .414.336.75.75.75h4a.75.75 0 000-1.5h-3.25V5z"
@@ -302,13 +276,7 @@ function ChallengeCard({
 // Challenge List (server component)
 // ---------------------------------------------------------------------------
 
-async function ChallengeList({
-  difficulty,
-  category,
-}: {
-  difficulty: string
-  category: string
-}) {
+async function ChallengeList({ difficulty, category }: { difficulty: string; category: string }) {
   const session = await auth()
   if (!session?.user?.id) redirect("/login")
 
@@ -351,7 +319,7 @@ async function ChallengeList({
 
   if (mapped.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center rounded-xl border border-neutral-800 bg-card px-8 py-20">
+      <div className="bg-card flex flex-col items-center justify-center rounded-xl border border-neutral-800 px-8 py-20">
         <div className="mb-4 text-neutral-700">
           <svg
             className="mx-auto size-12"
@@ -367,9 +335,7 @@ async function ChallengeList({
             />
           </svg>
         </div>
-        <h3 className="mb-2 text-lg font-semibold text-white">
-          No challenges match your filters
-        </h3>
+        <h3 className="mb-2 text-lg font-semibold text-white">No challenges match your filters</h3>
         <p className="mb-6 text-sm text-neutral-500">
           Try adjusting your filters to see more challenges.
         </p>
@@ -384,7 +350,7 @@ async function ChallengeList({
   }
 
   return (
-    <div className="grid gap-5 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
+    <div className="grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3">
       {mapped.map((challenge) => (
         <ChallengeCard key={challenge.id} challenge={challenge} />
       ))}
@@ -412,15 +378,14 @@ export default async function ChallengesPage({
         <div>
           <h1 className="text-3xl font-bold text-white">Challenges</h1>
           <p className="mt-1.5 text-neutral-400">
-            Sharpen your skills with coding challenges. Earn XP and build your
-            streak.
+            Sharpen your skills with coding challenges. Earn XP and build your streak.
           </p>
         </div>
         <Suspense
           fallback={
             <div className="flex items-center gap-4">
               <div className="size-14 animate-pulse rounded-full bg-neutral-800" />
-              <div className="hidden sm:block space-y-1">
+              <div className="hidden space-y-1 sm:block">
                 <div className="h-4 w-28 animate-pulse rounded bg-neutral-800" />
                 <div className="h-3 w-20 animate-pulse rounded bg-neutral-800" />
               </div>
@@ -446,13 +411,7 @@ export default async function ChallengesPage({
 // Header Progress (server component - progress ring in header)
 // ---------------------------------------------------------------------------
 
-async function HeaderProgress({
-  difficulty,
-  category,
-}: {
-  difficulty: string
-  category: string
-}) {
+async function HeaderProgress({ difficulty, category }: { difficulty: string; category: string }) {
   const session = await auth()
   if (!session?.user?.id) return null
 
@@ -473,9 +432,7 @@ async function HeaderProgress({
   })
 
   const total = challenges.length
-  const completedCount = challenges.filter(
-    (c) => c.progress[0]?.status === "completed"
-  ).length
+  const completedCount = challenges.filter((c) => c.progress[0]?.status === "completed").length
 
   if (total === 0) return null
 
@@ -502,11 +459,11 @@ async function HeaderProgress({
 
 function ChallengeListSkeleton() {
   return (
-    <div className="grid gap-5 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
+    <div className="grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3">
       {Array.from({ length: 6 }).map((_, i) => (
         <div
           key={i}
-          className="flex h-56 flex-col rounded-xl border border-neutral-800 bg-card p-6"
+          className="bg-card flex h-56 flex-col rounded-xl border border-neutral-800 p-6"
         >
           <div className="mb-3 flex items-center justify-between">
             <div className="h-5 w-16 animate-pulse rounded bg-neutral-800" />

@@ -9,14 +9,7 @@ interface SolveCelebrationProps {
   onDismiss: () => void
 }
 
-const CONFETTI_COLORS = [
-  "#84cc16",
-  "#22d3ee",
-  "#f59e0b",
-  "#a855f7",
-  "#f43f5e",
-  "#3b82f6",
-]
+const CONFETTI_COLORS = ["#84cc16", "#22d3ee", "#f59e0b", "#a855f7", "#f43f5e", "#3b82f6"]
 
 export function SolveCelebration({
   xpAwarded,
@@ -126,8 +119,18 @@ export function SolveCelebration({
           aria-label="Challenge solved celebration"
         >
           <div className="flex size-20 items-center justify-center rounded-full bg-lime-500/10">
-            <svg className="size-10 text-lime-400" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M16.5 18.75h-9m9 0a3 3 0 013 3h-15a3 3 0 013-3m9 0v-3.375c0-.621-.503-1.125-1.125-1.125h-.871M7.5 18.75v-3.375c0-.621.504-1.125 1.125-1.125h.872m5.007 0H9.497m5.007 0a7.454 7.454 0 01-.982-3.172M9.497 14.25a7.454 7.454 0 00.981-3.172M5.25 4.236c-.982.143-1.954.317-2.916.52A6.003 6.003 0 007.73 9.728M5.25 4.236V4.5c0 2.108.966 3.99 2.48 5.228M5.25 4.236V2.721C7.456 2.41 9.71 2.25 12 2.25c2.291 0 4.545.16 6.75.47v1.516M18.75 4.236c.982.143 1.954.317 2.916.52A6.003 6.003 0 0116.27 9.728M18.75 4.236V4.5c0 2.108-.966 3.99-2.48 5.228m0 0a6.985 6.985 0 01-2.77.853 6.985 6.985 0 01-2.77-.853" />
+            <svg
+              className="size-10 text-lime-400"
+              fill="none"
+              viewBox="0 0 24 24"
+              strokeWidth={1.5}
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M16.5 18.75h-9m9 0a3 3 0 013 3h-15a3 3 0 013-3m9 0v-3.375c0-.621-.503-1.125-1.125-1.125h-.871M7.5 18.75v-3.375c0-.621.504-1.125 1.125-1.125h.872m5.007 0H9.497m5.007 0a7.454 7.454 0 01-.982-3.172M9.497 14.25a7.454 7.454 0 00.981-3.172M5.25 4.236c-.982.143-1.954.317-2.916.52A6.003 6.003 0 007.73 9.728M5.25 4.236V4.5c0 2.108.966 3.99 2.48 5.228M5.25 4.236V2.721C7.456 2.41 9.71 2.25 12 2.25c2.291 0 4.545.16 6.75.47v1.516M18.75 4.236c.982.143 1.954.317 2.916.52A6.003 6.003 0 0116.27 9.728M18.75 4.236V4.5c0 2.108-.966 3.99-2.48 5.228m0 0a6.985 6.985 0 01-2.77.853 6.985 6.985 0 01-2.77-.853"
+              />
             </svg>
           </div>
 
@@ -136,13 +139,15 @@ export function SolveCelebration({
             <p className="mt-1 text-sm text-neutral-400">Great work! Keep the momentum going.</p>
           </div>
 
-          <div className="font-mono text-5xl font-bold tabular-nums text-lime-500">
+          <div className="font-mono text-5xl font-bold text-lime-500 tabular-nums">
             +{displayXp} XP
           </div>
 
           {streak !== undefined && streak > 0 && (
             <div className="flex items-center gap-2 rounded-full border border-amber-500/20 bg-amber-500/10 px-4 py-1.5 text-sm">
-              <span role="img" aria-label="fire">🔥</span>
+              <span role="img" aria-label="fire">
+                🔥
+              </span>
               <span className="font-bold text-amber-400">{streak} day streak!</span>
             </div>
           )}
@@ -155,7 +160,11 @@ export function SolveCelebration({
             >
               Next Challenge
               <svg className="size-4" viewBox="0 0 20 20" fill="currentColor">
-                <path fillRule="evenodd" d="M3 10a.75.75 0 01.75-.75h10.638L10.23 5.29a.75.75 0 111.04-1.08l5.5 5.25a.75.75 0 010 1.08l-5.5 5.25a.75.75 0 11-1.04-1.08l4.158-3.96H3.75A.75.75 0 013 10z" clipRule="evenodd" />
+                <path
+                  fillRule="evenodd"
+                  d="M3 10a.75.75 0 01.75-.75h10.638L10.23 5.29a.75.75 0 111.04-1.08l5.5 5.25a.75.75 0 010 1.08l-5.5 5.25a.75.75 0 11-1.04-1.08l4.158-3.96H3.75A.75.75 0 013 10z"
+                  clipRule="evenodd"
+                />
               </svg>
             </button>
             <button

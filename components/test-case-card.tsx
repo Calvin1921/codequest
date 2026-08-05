@@ -11,27 +11,18 @@ export function TestCaseList({ testCases, limit, total }: TestCaseListProps) {
   return (
     <div className="space-y-3">
       {displayed.map((tc, i) => (
-        <div
-          key={i}
-          className="rounded-lg border border-neutral-800 bg-neutral-900/60 p-4"
-        >
-          <p className="mb-1 text-xs font-medium text-neutral-500">
-            {tc.description}
-          </p>
+        <div key={i} className="rounded-lg border border-neutral-800 bg-neutral-900/60 p-4">
+          <p className="mb-1 text-xs font-medium text-neutral-500">{tc.description}</p>
           <pre className="overflow-x-auto font-mono text-xs leading-5 text-neutral-300">
-            <span className="text-zinc-500">Input:    </span>
+            <span className="text-zinc-500">Input: </span>
             {JSON.stringify(tc.input)}
-            {'\n'}
+            {"\n"}
             <span className="text-zinc-500">Expected: </span>
-            <span className="text-lime-400">
-              {JSON.stringify(tc.expected)}
-            </span>
+            <span className="text-lime-400">{JSON.stringify(tc.expected)}</span>
           </pre>
         </div>
       ))}
-      {displayTotal === 0 && (
-        <p className="text-sm text-neutral-600">No test cases available.</p>
-      )}
+      {displayTotal === 0 && <p className="text-sm text-neutral-600">No test cases available.</p>}
     </div>
   )
 }

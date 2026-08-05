@@ -4,10 +4,10 @@ import { Code2, Bot, Trophy, ChevronRight, Zap, Target, MessageSquare } from "lu
 
 export default function HomePage() {
   return (
-    <div className="min-h-screen bg-[#0a0a0b] text-white overflow-hidden">
+    <div className="min-h-screen overflow-hidden bg-[#0a0a0b] text-white">
       {/* Navigation */}
       <nav className="relative z-10 border-b border-white/5">
-        <div className="mx-auto max-w-6xl px-6 py-4 flex items-center justify-between">
+        <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
           <Link href="/" className="text-xl font-bold tracking-tight">
             Code<span className="text-[#84cc16]">Quest</span>
           </Link>
@@ -15,13 +15,13 @@ export default function HomePage() {
             <Button
               variant="ghost"
               asChild
-              className="text-zinc-400 hover:text-white hover:bg-white/5"
+              className="text-zinc-400 hover:bg-white/5 hover:text-white"
             >
               <Link href="/login">Sign In</Link>
             </Button>
             <Button
               asChild
-              className="bg-[#84cc16] text-black font-semibold hover:bg-[#a3e635] transition-colors"
+              className="bg-[#84cc16] font-semibold text-black transition-colors hover:bg-[#a3e635]"
             >
               <Link href="/register">Start Free</Link>
             </Button>
@@ -32,9 +32,9 @@ export default function HomePage() {
       {/* Hero Section */}
       <section className="relative py-24 md:py-32">
         {/* Animated code background */}
-        <div className="absolute inset-0 overflow-hidden opacity-[0.07] pointer-events-none select-none font-mono text-sm leading-relaxed">
+        <div className="pointer-events-none absolute inset-0 overflow-hidden font-mono text-sm leading-relaxed opacity-[0.07] select-none">
           <div className="cq-code-float-1 absolute top-[10%] left-[5%] whitespace-pre">
-{`function binarySearch(arr, target) {
+            {`function binarySearch(arr, target) {
   let lo = 0, hi = arr.length - 1;
   while (lo <= hi) {
     const mid = (lo + hi) >>> 1;
@@ -45,7 +45,7 @@ export default function HomePage() {
 }`}
           </div>
           <div className="cq-code-float-2 absolute top-[30%] right-[3%] whitespace-pre">
-{`class LRUCache {
+            {`class LRUCache {
   constructor(capacity) {
     this.capacity = capacity;
     this.cache = new Map();
@@ -60,7 +60,7 @@ export default function HomePage() {
 }`}
           </div>
           <div className="cq-code-float-3 absolute bottom-[15%] left-[15%] whitespace-pre">
-{`const mergeSort = (arr) => {
+            {`const mergeSort = (arr) => {
   if (arr.length <= 1) return arr;
   const mid = arr.length >> 1;
   const left = mergeSort(arr.slice(0, mid));
@@ -75,22 +75,20 @@ export default function HomePage() {
             <Zap className="h-3.5 w-3.5" />
             AI-powered interview prep for senior engineers
           </div>
-          <h1 className="text-5xl md:text-7xl font-extrabold tracking-tight leading-[1.1] mb-6">
-            Master Coding{" "}
-            <span className="text-[#84cc16]">Interviews</span>
+          <h1 className="mb-6 text-5xl leading-[1.1] font-extrabold tracking-tight md:text-7xl">
+            Master Coding <span className="text-[#84cc16]">Interviews</span>
             <br />
             <span className="text-zinc-500">Level Up Your Career</span>
           </h1>
-          <p className="text-lg md:text-xl text-zinc-400 max-w-2xl mx-auto mb-10 leading-relaxed">
-            A gamified platform where senior engineers sharpen interview skills
-            with real-world challenges, instant AI feedback, and progression
-            tracking that keeps you motivated.
+          <p className="mx-auto mb-10 max-w-2xl text-lg leading-relaxed text-zinc-400 md:text-xl">
+            A gamified platform where senior engineers sharpen interview skills with real-world
+            challenges, instant AI feedback, and progression tracking that keeps you motivated.
           </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+          <div className="flex flex-col justify-center gap-4 sm:flex-row">
             <Button
               size="lg"
               asChild
-              className="bg-[#84cc16] text-black font-semibold hover:bg-[#a3e635] h-12 px-8 text-base transition-all hover:scale-[1.02]"
+              className="h-12 bg-[#84cc16] px-8 text-base font-semibold text-black transition-all hover:scale-[1.02] hover:bg-[#a3e635]"
             >
               <Link href="/register">
                 Start Free
@@ -101,7 +99,7 @@ export default function HomePage() {
               size="lg"
               variant="outline"
               asChild
-              className="border-zinc-700 text-zinc-300 hover:bg-white/5 hover:text-white h-12 px-8 text-base"
+              className="h-12 border-zinc-700 px-8 text-base text-zinc-300 hover:bg-white/5 hover:text-white"
             >
               <Link href="/login">Sign In</Link>
             </Button>
@@ -112,10 +110,9 @@ export default function HomePage() {
       {/* Social proof */}
       <section className="border-y border-white/5 bg-white/[0.02]">
         <div className="mx-auto max-w-4xl px-6 py-6 text-center">
-          <p className="text-sm md:text-base text-zinc-500">
-            Join{" "}
-            <span className="text-zinc-300 font-semibold">10,000+</span>{" "}
-            engineers preparing for FAANG interviews
+          <p className="text-sm text-zinc-500 md:text-base">
+            Join <span className="font-semibold text-zinc-300">10,000+</span> engineers preparing
+            for FAANG interviews
           </p>
         </div>
       </section>
@@ -123,24 +120,22 @@ export default function HomePage() {
       {/* Feature Cards */}
       <section className="py-20 md:py-28">
         <div className="mx-auto max-w-6xl px-6">
-          <h2 className="text-3xl md:text-4xl font-bold text-center mb-4">
-            Everything you need to{" "}
-            <span className="text-[#84cc16]">ace the interview</span>
+          <h2 className="mb-4 text-center text-3xl font-bold md:text-4xl">
+            Everything you need to <span className="text-[#84cc16]">ace the interview</span>
           </h2>
-          <p className="text-zinc-500 text-center mb-14 max-w-xl mx-auto">
-            Built by engineers, for engineers. Every feature designed to
-            maximize your preparation efficiency.
+          <p className="mx-auto mb-14 max-w-xl text-center text-zinc-500">
+            Built by engineers, for engineers. Every feature designed to maximize your preparation
+            efficiency.
           </p>
-          <div className="grid md:grid-cols-3 gap-6">
+          <div className="grid gap-6 md:grid-cols-3">
             <div className="group relative rounded-xl border border-white/5 bg-white/[0.02] p-8 transition-all duration-300 hover:border-[#84cc16]/30 hover:bg-[#84cc16]/[0.03] hover:shadow-[0_0_30px_-10px_rgba(132,204,22,0.15)]">
               <div className="mb-4 inline-flex items-center justify-center rounded-lg bg-[#84cc16]/10 p-3">
                 <Code2 className="h-6 w-6 text-[#84cc16]" />
               </div>
-              <h3 className="text-lg font-semibold mb-2">Live Coding Challenges</h3>
-              <p className="text-sm text-zinc-400 leading-relaxed">
-                Solve algorithms, data structures, and system design problems in
-                a full-featured Monaco editor with syntax highlighting and
-                multi-language support.
+              <h3 className="mb-2 text-lg font-semibold">Live Coding Challenges</h3>
+              <p className="text-sm leading-relaxed text-zinc-400">
+                Solve algorithms, data structures, and system design problems in a full-featured
+                Monaco editor with syntax highlighting and multi-language support.
               </p>
             </div>
 
@@ -148,11 +143,10 @@ export default function HomePage() {
               <div className="mb-4 inline-flex items-center justify-center rounded-lg bg-[#22d3ee]/10 p-3">
                 <Bot className="h-6 w-6 text-[#22d3ee]" />
               </div>
-              <h3 className="text-lg font-semibold mb-2">AI-Powered Feedback</h3>
-              <p className="text-sm text-zinc-400 leading-relaxed">
-                Get detailed analysis on code quality, time complexity, edge
-                cases, and alternative approaches -- like having a senior
-                engineer review every solution.
+              <h3 className="mb-2 text-lg font-semibold">AI-Powered Feedback</h3>
+              <p className="text-sm leading-relaxed text-zinc-400">
+                Get detailed analysis on code quality, time complexity, edge cases, and alternative
+                approaches -- like having a senior engineer review every solution.
               </p>
             </div>
 
@@ -160,11 +154,10 @@ export default function HomePage() {
               <div className="mb-4 inline-flex items-center justify-center rounded-lg bg-[#84cc16]/10 p-3">
                 <Trophy className="h-6 w-6 text-[#84cc16]" />
               </div>
-              <h3 className="text-lg font-semibold mb-2">Gamified Learning</h3>
-              <p className="text-sm text-zinc-400 leading-relaxed">
-                Earn XP for each challenge, maintain daily streaks, unlock
-                achievements, and compete on leaderboards to stay motivated
-                throughout your prep.
+              <h3 className="mb-2 text-lg font-semibold">Gamified Learning</h3>
+              <p className="text-sm leading-relaxed text-zinc-400">
+                Earn XP for each challenge, maintain daily streaks, unlock achievements, and compete
+                on leaderboards to stay motivated throughout your prep.
               </p>
             </div>
           </div>
@@ -172,12 +165,12 @@ export default function HomePage() {
       </section>
 
       {/* How it works */}
-      <section className="py-20 md:py-28 border-t border-white/5">
+      <section className="border-t border-white/5 py-20 md:py-28">
         <div className="mx-auto max-w-5xl px-6">
-          <h2 className="text-3xl md:text-4xl font-bold text-center mb-16">
+          <h2 className="mb-16 text-center text-3xl font-bold md:text-4xl">
             How it <span className="text-[#22d3ee]">works</span>
           </h2>
-          <div className="grid md:grid-cols-3 gap-8 md:gap-12">
+          <div className="grid gap-8 md:grid-cols-3 md:gap-12">
             <div className="text-center">
               <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-full border border-[#84cc16]/20 bg-[#84cc16]/5 text-2xl font-bold text-[#84cc16]">
                 1
@@ -185,10 +178,10 @@ export default function HomePage() {
               <div className="mb-3 inline-flex items-center justify-center rounded-lg bg-white/5 p-2">
                 <Target className="h-5 w-5 text-zinc-400" />
               </div>
-              <h3 className="text-lg font-semibold mb-2">Pick a Challenge</h3>
-              <p className="text-sm text-zinc-500 leading-relaxed">
-                Choose from 200+ challenges across algorithms, data structures,
-                system design, and more.
+              <h3 className="mb-2 text-lg font-semibold">Pick a Challenge</h3>
+              <p className="text-sm leading-relaxed text-zinc-500">
+                Choose from 200+ challenges across algorithms, data structures, system design, and
+                more.
               </p>
             </div>
             <div className="text-center">
@@ -198,10 +191,10 @@ export default function HomePage() {
               <div className="mb-3 inline-flex items-center justify-center rounded-lg bg-white/5 p-2">
                 <Code2 className="h-5 w-5 text-zinc-400" />
               </div>
-              <h3 className="text-lg font-semibold mb-2">Write Your Code</h3>
-              <p className="text-sm text-zinc-500 leading-relaxed">
-                Solve it in our Monaco-powered editor with real-time syntax
-                highlighting and autocomplete.
+              <h3 className="mb-2 text-lg font-semibold">Write Your Code</h3>
+              <p className="text-sm leading-relaxed text-zinc-500">
+                Solve it in our Monaco-powered editor with real-time syntax highlighting and
+                autocomplete.
               </p>
             </div>
             <div className="text-center">
@@ -211,10 +204,9 @@ export default function HomePage() {
               <div className="mb-3 inline-flex items-center justify-center rounded-lg bg-white/5 p-2">
                 <MessageSquare className="h-5 w-5 text-zinc-400" />
               </div>
-              <h3 className="text-lg font-semibold mb-2">Get AI Feedback</h3>
-              <p className="text-sm text-zinc-500 leading-relaxed">
-                Receive instant, detailed feedback on correctness, complexity,
-                and code quality.
+              <h3 className="mb-2 text-lg font-semibold">Get AI Feedback</h3>
+              <p className="text-sm leading-relaxed text-zinc-500">
+                Receive instant, detailed feedback on correctness, complexity, and code quality.
               </p>
             </div>
           </div>
@@ -222,51 +214,38 @@ export default function HomePage() {
       </section>
 
       {/* Stats */}
-      <section className="py-20 md:py-24 border-t border-white/5 bg-white/[0.02]">
+      <section className="border-t border-white/5 bg-white/[0.02] py-20 md:py-24">
         <div className="mx-auto max-w-4xl px-6">
           <div className="grid grid-cols-3 gap-8">
             <div className="text-center">
-              <div className="text-4xl md:text-5xl font-extrabold text-[#84cc16] mb-2">
-                200+
-              </div>
-              <div className="text-sm text-zinc-500 uppercase tracking-wider">
-                Challenges
-              </div>
+              <div className="mb-2 text-4xl font-extrabold text-[#84cc16] md:text-5xl">200+</div>
+              <div className="text-sm tracking-wider text-zinc-500 uppercase">Challenges</div>
             </div>
             <div className="text-center">
-              <div className="text-4xl md:text-5xl font-extrabold text-[#22d3ee] mb-2">
-                5
-              </div>
-              <div className="text-sm text-zinc-500 uppercase tracking-wider">
-                Categories
-              </div>
+              <div className="mb-2 text-4xl font-extrabold text-[#22d3ee] md:text-5xl">5</div>
+              <div className="text-sm tracking-wider text-zinc-500 uppercase">Categories</div>
             </div>
             <div className="text-center">
-              <div className="text-4xl md:text-5xl font-extrabold text-[#84cc16] mb-2">
-                AI
-              </div>
-              <div className="text-sm text-zinc-500 uppercase tracking-wider">
-                Powered Feedback
-              </div>
+              <div className="mb-2 text-4xl font-extrabold text-[#84cc16] md:text-5xl">AI</div>
+              <div className="text-sm tracking-wider text-zinc-500 uppercase">Powered Feedback</div>
             </div>
           </div>
         </div>
       </section>
 
       {/* Final CTA */}
-      <section className="py-20 md:py-28 border-t border-white/5">
+      <section className="border-t border-white/5 py-20 md:py-28">
         <div className="mx-auto max-w-3xl px-6 text-center">
-          <h2 className="text-3xl md:text-4xl font-bold mb-4">
+          <h2 className="mb-4 text-3xl font-bold md:text-4xl">
             Start Your Streak <span className="text-[#84cc16]">Today</span>
           </h2>
-          <p className="text-zinc-500 mb-10 max-w-lg mx-auto">
-            Every day counts. Build consistency, sharpen your skills, and land
-            the role you deserve.
+          <p className="mx-auto mb-10 max-w-lg text-zinc-500">
+            Every day counts. Build consistency, sharpen your skills, and land the role you deserve.
           </p>
           <Button
             size="lg"
             asChild
-            className="bg-gradient-to-r from-[#84cc16] to-[#65a30d] text-black font-semibold h-12 px-10 text-base hover:opacity-90 transition-all hover:scale-[1.02]"
+            className="h-12 bg-gradient-to-r from-[#84cc16] to-[#65a30d] px-10 text-base font-semibold text-black transition-all hover:scale-[1.02] hover:opacity-90"
           >
             <Link href="/register">
               Start Free
@@ -278,15 +257,15 @@ export default function HomePage() {
 
       {/* Footer */}
       <footer className="border-t border-white/5 py-8">
-        <div className="mx-auto max-w-6xl px-6 flex flex-col md:flex-row items-center justify-between gap-4">
+        <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-4 px-6 md:flex-row">
           <div className="text-sm text-zinc-600">
             &copy; 2026 Code<span className="text-zinc-500">Quest</span>. All rights reserved.
           </div>
           <div className="flex gap-6 text-sm text-zinc-600">
-            <Link href="/login" className="hover:text-zinc-400 transition-colors">
+            <Link href="/login" className="transition-colors hover:text-zinc-400">
               Sign In
             </Link>
-            <Link href="/register" className="hover:text-zinc-400 transition-colors">
+            <Link href="/register" className="transition-colors hover:text-zinc-400">
               Get Started
             </Link>
           </div>

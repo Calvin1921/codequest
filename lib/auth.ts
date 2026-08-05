@@ -42,10 +42,7 @@ const providers: any[] = [
         return null
       }
 
-      const isValid = await bcrypt.compare(
-        parsed.data.password,
-        user.password
-      )
+      const isValid = await bcrypt.compare(parsed.data.password, user.password)
 
       if (!isValid) {
         return null
@@ -62,17 +59,21 @@ const providers: any[] = [
 ]
 
 if (process.env.GITHUB_CLIENT_ID) {
-  providers.push(GitHub({
-    clientId: process.env.GITHUB_CLIENT_ID,
-    clientSecret: process.env.GITHUB_CLIENT_SECRET!,
-  }))
+  providers.push(
+    GitHub({
+      clientId: process.env.GITHUB_CLIENT_ID,
+      clientSecret: process.env.GITHUB_CLIENT_SECRET!,
+    })
+  )
 }
 
 if (process.env.GOOGLE_CLIENT_ID) {
-  providers.push(Google({
-    clientId: process.env.GOOGLE_CLIENT_ID,
-    clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
-  }))
+  providers.push(
+    Google({
+      clientId: process.env.GOOGLE_CLIENT_ID,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
+    })
+  )
 }
 
 export const { handlers, auth, signIn, signOut } = NextAuth({

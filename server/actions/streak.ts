@@ -1,6 +1,6 @@
-'use server'
+"use server"
 
-import { prisma } from '@/server/db'
+import { prisma } from "@/server/db"
 
 // NOTE: All streak dates use UTC (via toISOString). This means a user's "day"
 // boundary depends on their relationship to UTC, not their local timezone.
@@ -10,13 +10,13 @@ import { prisma } from '@/server/db'
 // "today"/"yesterday" relative to their local time.
 
 function getTodayISO(): string {
-  return new Date().toISOString().split('T')[0]
+  return new Date().toISOString().split("T")[0]
 }
 
 function getYesterdayISO(): string {
   const d = new Date()
   d.setDate(d.getDate() - 1)
-  return d.toISOString().split('T')[0]
+  return d.toISOString().split("T")[0]
 }
 
 export interface StreakInfo {

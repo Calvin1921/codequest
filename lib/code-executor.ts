@@ -1,5 +1,5 @@
-import vm from 'node:vm'
-import { type TestCase, type TestResult, type ExecutionResult } from './types'
+import vm from "node:vm"
+import { type TestCase, type TestResult, type ExecutionResult } from "./types"
 
 const EXECUTION_TIMEOUT_MS = 5000
 
@@ -17,7 +17,7 @@ function deepEqual(a: unknown, b: unknown): boolean {
     return a.every((val, i) => deepEqual(val, b[i]))
   }
 
-  if (typeof a === 'object' && typeof b === 'object') {
+  if (typeof a === "object" && typeof b === "object") {
     const aObj = a as Record<string, unknown>
     const bObj = b as Record<string, unknown>
     const aKeys = Object.keys(aObj)
@@ -51,8 +51,7 @@ export function executeCode(
   let script: vm.Script
   try {
     script = new vm.Script(userCode, {
-      filename: 'user-code.js',
-
+      filename: "user-code.js",
     })
   } catch (err) {
     const error = err instanceof Error ? err.message : String(err)
@@ -89,12 +88,15 @@ export function executeCode(
       // Create completely isolated context — no host objects at all
       // Define console inside the context to avoid cross-realm contamination
       const context = vm.createContext({})
-      vm.runInContext('var console = { log: function(){}, error: function(){}, warn: function(){} }', context)
+      vm.runInContext(
+        "var console = { log: function(){}, error: function(){}, warn: function(){} }",
+        context
+      )
 
       // Determine which function to call
       const fnName = functionName || detectFunctionName(userCode)
       if (!fnName) {
-        result.error = 'Could not detect exported function name in your code'
+        result.error = "Could not detect exported function name in your code"
         result.executionTimeMs = performance.now() - testStart
         results.push(result)
         continue
@@ -119,8 +121,7 @@ export function executeCode(
             }
             return results;
           })()
-          `,
-          
+          `
         )
 
         result.actual = callScript.runInContext(context, {
@@ -142,9 +143,8 @@ export function executeCode(
       }
     } catch (err) {
       if (err instanceof Error) {
-        if (err.message.includes('Script execution timed out')) {
-          result.error =
-            'Execution timed out (possible infinite loop or excessive computation)'
+        if (err.message.includes("Script execution timed out")) {
+          result.error = "Execution timed out (possible infinite loop or excessive computation)"
         } else {
           result.error = `Runtime error: ${err.message}`
         }
@@ -181,9 +181,7 @@ function detectFunctionName(code: string): string | null {
   if (classMatch) return classMatch[1]
 
   // Match const/let/var name = function or arrow
-  const varMatch = code.match(
-    /(?:const|let|var)\s+([a-zA-Z_\$][a-zA-Z0-9_\$]*)\s*=/
-  )
+  const varMatch = code.match(/(?:const|let|var)\s+([a-zA-Z_\$][a-zA-Z0-9_\$]*)\s*=/)
   if (varMatch) return varMatch[1]
 
   return null
@@ -191,14 +189,23 @@ function detectFunctionName(code: string): string | null {
 
 /**
  * Heuristic to detect class-based challenges:
- * input is an array of arrays where each sub-array starts with a string (method name).
+ * input is an array of operations, each an array starting with a string
+ * (method name), and expected holds one result per operation — so
+ * input.length must equal expected.length. That last check is what
+ * distinguishes a real operations list (e.g. LRU Cache's
+ * [['LRUCache', 2], ['put', 1, 1], ...]) from a plain function call whose
+ * single argument happens to be an array beginning with a string, e.g.
+ * findDuplicates(['a', 'b', 'a']) — without it, that call's 1-element
+ * input array (vs. a differently-sized expected array) was misclassified
+ * as a class challenge and executed via the wrong code path.
  */
 function isClassChallenge(testCase: TestCase): boolean {
   return (
     Array.isArray(testCase.input) &&
     testCase.input.length > 0 &&
     Array.isArray(testCase.input[0]) &&
-    typeof testCase.input[0][0] === 'string' &&
-    Array.isArray(testCase.expected)
+    typeof testCase.input[0][0] === "string" &&
+    Array.isArray(testCase.expected) &&
+    testCase.input.length === testCase.expected.length
   )
 }

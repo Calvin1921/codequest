@@ -1,15 +1,12 @@
-import { Ratelimit } from '@upstash/ratelimit'
-import { Redis } from '@upstash/redis'
+import { Ratelimit } from "@upstash/ratelimit"
+import { Redis } from "@upstash/redis"
 
 const redis =
   process.env.UPSTASH_REDIS_REST_URL && process.env.UPSTASH_REDIS_REST_TOKEN
     ? Redis.fromEnv()
     : null
 
-function createRateLimiter(
-  limiter: ReturnType<typeof Ratelimit.slidingWindow>,
-  prefix: string
-) {
+function createRateLimiter(limiter: ReturnType<typeof Ratelimit.slidingWindow>, prefix: string) {
   if (!redis) return null
   return new Ratelimit({
     redis,
@@ -20,26 +17,14 @@ function createRateLimiter(
 }
 
 export const rateLimiters = {
-  auth: createRateLimiter(
-    Ratelimit.slidingWindow(5, '15 m'),
-    '@upstash/ratelimit:auth'
-  ),
+  auth: createRateLimiter(Ratelimit.slidingWindow(5, "15 m"), "@upstash/ratelimit:auth"),
 
-  posts: createRateLimiter(
-    Ratelimit.slidingWindow(10, '1 h'),
-    '@upstash/ratelimit:posts'
-  ),
+  posts: createRateLimiter(Ratelimit.slidingWindow(10, "1 h"), "@upstash/ratelimit:posts"),
 
-  api: createRateLimiter(
-    Ratelimit.slidingWindow(100, '1 h'),
-    '@upstash/ratelimit:api'
-  ),
+  api: createRateLimiter(Ratelimit.slidingWindow(100, "1 h"), "@upstash/ratelimit:api"),
 }
 
-export async function checkRateLimit(
-  identifier: string,
-  type: keyof typeof rateLimiters = 'api'
-) {
+export async function checkRateLimit(identifier: string, type: keyof typeof rateLimiters = "api") {
   const limiter = rateLimiters[type]
   if (!limiter) {
     return {
@@ -59,9 +44,9 @@ export async function checkRateLimit(
     reset,
     remaining,
     headers: {
-      'X-RateLimit-Limit': limit.toString(),
-      'X-RateLimit-Remaining': remaining.toString(),
-      'X-RateLimit-Reset': new Date(reset).toISOString(),
+      "X-RateLimit-Limit": limit.toString(),
+      "X-RateLimit-Remaining": remaining.toString(),
+      "X-RateLimit-Reset": new Date(reset).toISOString(),
     },
   }
 }
@@ -69,7 +54,7 @@ export async function checkRateLimit(
 // eslint-disable-next-line @typescript-eslint/no-explicit-any -- generic HOF requires any for argument/return flexibility
 export function withRateLimit<T extends (...args: any[]) => Promise<any>>(
   fn: T,
-  type: keyof typeof rateLimiters = 'api'
+  type: keyof typeof rateLimiters = "api"
 ): T {
   return (async (...args: Parameters<T>) => {
     if (!redis) {
@@ -81,7 +66,7 @@ export function withRateLimit<T extends (...args: any[]) => Promise<any>>(
 
     if (!success) {
       return {
-        message: 'Too many requests. Please try again later.',
+        message: "Too many requests. Please try again later.",
         headers,
       }
     }
@@ -91,18 +76,18 @@ export function withRateLimit<T extends (...args: any[]) => Promise<any>>(
 }
 
 async function getIdentifier() {
-  const { auth } = await import('@/lib/auth')
+  const { auth } = await import("@/lib/auth")
   const session = await auth()
 
   if (session?.user?.id) {
     return `user:${session.user.id}`
   }
 
-  const { headers } = await import('next/headers')
+  const { headers } = await import("next/headers")
   const headersList = await headers()
-  const realIp = headersList.get('x-real-ip')
-  const forwarded = headersList.get('x-forwarded-for')
-  const ip = realIp ?? (forwarded ? forwarded.split(',')[0] : 'anonymous')
+  const realIp = headersList.get("x-real-ip")
+  const forwarded = headersList.get("x-forwarded-for")
+  const ip = realIp ?? (forwarded ? forwarded.split(",")[0] : "anonymous")
 
   return `ip:${ip}`
 }

@@ -1,5 +1,5 @@
-import { DifficultyBadge } from '@/components/difficulty-badge'
-import type { Difficulty } from '@/lib/types'
+import { DifficultyBadge } from "@/components/difficulty-badge"
+import type { Difficulty } from "@/lib/types"
 
 interface ChallengeHeaderProps {
   challenge: { title: string; difficulty: Difficulty; category: string; xpReward: number }
@@ -10,20 +10,18 @@ interface ChallengeHeaderProps {
 
 export function ChallengeHeader({ challenge, isSolved, xpEarned, compact }: ChallengeHeaderProps) {
   return (
-    <div className={compact ? 'space-y-3 mb-4' : 'space-y-3 mb-6'}>
+    <div className={compact ? "mb-4 space-y-3" : "mb-6 space-y-3"}>
       <div className="flex flex-wrap items-center gap-2">
-        <h1 className={`${compact ? 'text-lg' : 'text-xl'} font-bold text-white`}>
+        <h1 className={`${compact ? "text-lg" : "text-xl"} font-bold text-white`}>
           {challenge.title}
         </h1>
-        <DifficultyBadge
-          difficulty={challenge.difficulty}
-        />
+        <DifficultyBadge difficulty={challenge.difficulty} />
       </div>
       <div className="flex items-center gap-3">
-        <span className="rounded-md bg-neutral-800 px-2.5 py-1 text-xs font-medium capitalize text-neutral-400">
+        <span className="rounded-md bg-neutral-800 px-2.5 py-1 text-xs font-medium text-neutral-400 capitalize">
           {challenge.category}
         </span>
-        <span className="font-mono text-sm font-bold tabular-nums text-lime-500">
+        <span className="font-mono text-sm font-bold text-lime-500 tabular-nums">
           {challenge.xpReward} XP
         </span>
       </div>

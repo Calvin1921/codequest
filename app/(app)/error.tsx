@@ -1,8 +1,8 @@
-'use client'
+"use client"
 
-import { useEffect } from 'react'
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
+import { useEffect } from "react"
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
+import { Button } from "@/components/ui/button"
 
 export default function AppError({
   error,
@@ -16,15 +16,15 @@ export default function AppError({
   }, [error])
 
   return (
-    <div className="container mx-auto flex items-center justify-center min-h-[50vh] py-8">
+    <div className="container mx-auto flex min-h-[50vh] items-center justify-center py-8">
       <Card className="w-full max-w-md">
         <CardHeader>
           <CardTitle>Something went wrong</CardTitle>
         </CardHeader>
         <CardContent>
           <p className="text-muted-foreground">
-            An unexpected error occurred. Please try again or contact support if
-            the problem persists.
+            An unexpected error occurred. Please try again or contact support if the problem
+            persists.
           </p>
         </CardContent>
         <CardFooter>

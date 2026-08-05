@@ -17,31 +17,27 @@ interface ChallengeEditorProps {
 }
 
 export const ChallengeEditor = forwardRef<ChallengeEditorHandle, ChallengeEditorProps>(
-  function ChallengeEditor(
-    {
-      starterCode,
-      language,
-      onSubmit,
-      previousCode,
-    },
-    ref
-  ) {
+  function ChallengeEditor({ starterCode, language, onSubmit, previousCode }, ref) {
     const editorRef = useRef<Parameters<OnMount>[0] | null>(null)
 
-    useImperativeHandle(ref, () => ({
-      getCode: () => editorRef.current?.getValue() ?? starterCode,
-      reset: () => {
-        const confirmed = window.confirm(
-          "Reset to starter code? Your current changes will be lost."
-        )
-        if (confirmed) {
-          editorRef.current?.setValue(starterCode)
-        }
-      },
-      layout: () => {
-        editorRef.current?.layout()
-      },
-    }), [starterCode])
+    useImperativeHandle(
+      ref,
+      () => ({
+        getCode: () => editorRef.current?.getValue() ?? starterCode,
+        reset: () => {
+          const confirmed = window.confirm(
+            "Reset to starter code? Your current changes will be lost."
+          )
+          if (confirmed) {
+            editorRef.current?.setValue(starterCode)
+          }
+        },
+        layout: () => {
+          editorRef.current?.layout()
+        },
+      }),
+      [starterCode]
+    )
 
     const handleEditorDidMount: OnMount = useCallback(
       (editor, monaco) => {

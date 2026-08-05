@@ -1,10 +1,7 @@
 import { cn } from "@/lib/utils"
 import type { Difficulty } from "@/lib/types"
 
-const difficultyConfig: Record<
-  Difficulty,
-  { label: string; className: string }
-> = {
+const difficultyConfig: Record<Difficulty, { label: string; className: string }> = {
   easy: {
     label: "Easy",
     className: "bg-green-500/10 text-green-400 border-green-500/20",
@@ -24,10 +21,7 @@ interface DifficultyBadgeProps {
   className?: string
 }
 
-export function DifficultyBadge({
-  difficulty,
-  className,
-}: DifficultyBadgeProps) {
+export function DifficultyBadge({ difficulty, className }: DifficultyBadgeProps) {
   const config = difficultyConfig[difficulty]
 
   return (

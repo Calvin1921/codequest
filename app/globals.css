@@ -171,7 +171,8 @@
 }
 
 @keyframes confetti-shake {
-  0%, 100% {
+  0%,
+  100% {
     transform: translateX(0);
   }
   25% {
@@ -187,14 +188,28 @@
    Hides sidebar, header, tab bar when active
    ============================================ */
 /* Sidebar collapsed label hiding */
-[data-collapsed] .sidebar-label { display: none; }
+[data-collapsed] .sidebar-label {
+  display: none;
+}
 
-.solve-page-active aside { display: none !important; }
-.solve-page-active main { padding-left: 0 !important; padding: 0 !important; min-height: auto !important; }
+.solve-page-active aside {
+  display: none !important;
+}
+.solve-page-active main {
+  padding-left: 0 !important;
+  padding: 0 !important;
+  min-height: auto !important;
+}
 .solve-page-active .mobile-header,
-.solve-page-active header.sticky { display: none !important; }
-.solve-page-active nav[class*="fixed bottom-0"] { display: none !important; }
-.solve-page-active main > div { padding: 0 !important; }
+.solve-page-active header.sticky {
+  display: none !important;
+}
+.solve-page-active nav[class*="fixed bottom-0"] {
+  display: none !important;
+}
+.solve-page-active main > div {
+  padding: 0 !important;
+}
 
 /* Confetti piece (existing component support) */
 .confetti-piece {
@@ -203,6 +218,7 @@
   width: 10px;
   height: 10px;
   z-index: 60;
-  animation: confetti-fall linear forwards,
-             confetti-shake 0.5s ease-in-out infinite;
+  animation:
+    confetti-fall linear forwards,
+    confetti-shake 0.5s ease-in-out infinite;
 }

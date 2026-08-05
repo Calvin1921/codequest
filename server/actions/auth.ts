@@ -1,10 +1,10 @@
-'use server'
+"use server"
 
-import { z } from 'zod'
-import bcrypt from 'bcryptjs'
-import { prisma } from '@/server/db'
-import { withRateLimit } from '@/server/ratelimit'
-import { signIn } from '@/lib/auth'
+import { z } from "zod"
+import bcrypt from "bcryptjs"
+import { prisma } from "@/server/db"
+import { withRateLimit } from "@/server/ratelimit"
+import { signIn } from "@/lib/auth"
 
 export type RegisterState = {
   message: string
@@ -17,24 +17,24 @@ export type RegisterState = {
 }
 
 const registerSchema = z.object({
-  name: z.string().min(2, 'Name must be at least 2 characters'),
-  email: z.string().email('Invalid email address'),
-  password: z.string().min(8, 'Password must be at least 8 characters'),
+  name: z.string().min(2, "Name must be at least 2 characters"),
+  email: z.string().email("Invalid email address"),
+  password: z.string().min(8, "Password must be at least 8 characters"),
 })
 
 export const registerUser = withRateLimit(
   async (prevState: RegisterState, formData: FormData): Promise<RegisterState> => {
     try {
       const validatedFields = registerSchema.safeParse({
-        name: formData.get('name'),
-        email: formData.get('email'),
-        password: formData.get('password'),
+        name: formData.get("name"),
+        email: formData.get("email"),
+        password: formData.get("password"),
       })
 
       if (!validatedFields.success) {
         return {
           errors: validatedFields.error.flatten().fieldErrors,
-          message: 'Invalid fields. Please check your input.',
+          message: "Invalid fields. Please check your input.",
         }
       }
 
@@ -46,8 +46,8 @@ export const registerUser = withRateLimit(
 
       if (existingUser) {
         return {
-          errors: { email: ['Email already registered'] },
-          message: 'An account with this email already exists.',
+          errors: { email: ["Email already registered"] },
+          message: "An account with this email already exists.",
         }
       }
 
@@ -61,24 +61,24 @@ export const registerUser = withRateLimit(
         },
       })
 
-      await signIn('credentials', {
+      await signIn("credentials", {
         email,
         password,
         redirect: false,
       })
 
       return {
-        message: '',
+        message: "",
         errors: {},
         success: true,
       }
     } catch (error) {
-      console.error('Registration error:', error)
+      console.error("Registration error:", error)
       return {
-        message: 'Something went wrong. Please try again.',
+        message: "Something went wrong. Please try again.",
         errors: {},
       }
     }
   },
-  'auth'
+  "auth"
 )

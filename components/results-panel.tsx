@@ -1,5 +1,5 @@
-import type { ExecutionResult } from '@/lib/types'
-import { TestResults } from '@/components/test-results'
+import type { ExecutionResult } from "@/lib/types"
+import { TestResults } from "@/components/test-results"
 
 interface ResultsPanelProps {
   executionResult: ExecutionResult | null
@@ -13,7 +13,7 @@ export function ResultsPanel({ executionResult, executionError, xpAwarded }: Res
       {executionError && (
         <div className="mb-3 rounded-lg border border-red-500/20 bg-red-500/5 px-4 py-3 text-sm">
           <p className="font-semibold text-red-400">Error</p>
-          <pre className="mt-1.5 overflow-x-auto whitespace-pre-wrap rounded bg-red-950/50 p-3 font-mono text-xs leading-5 text-red-300">
+          <pre className="mt-1.5 overflow-x-auto rounded bg-red-950/50 p-3 font-mono text-xs leading-5 whitespace-pre-wrap text-red-300">
             {executionError}
           </pre>
         </div>
@@ -28,9 +28,7 @@ export function ResultsPanel({ executionResult, executionError, xpAwarded }: Res
           xpAwarded={xpAwarded}
         />
       ) : !executionError ? (
-        <p className="py-6 text-center text-sm text-neutral-600">
-          Run tests to see results here
-        </p>
+        <p className="py-6 text-center text-sm text-neutral-600">Run tests to see results here</p>
       ) : null}
     </>
   )

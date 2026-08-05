@@ -1,4 +1,4 @@
-export type Difficulty = 'easy' | 'medium' | 'hard'
+export type Difficulty = "easy" | "medium" | "hard"
 /* eslint-disable @typescript-eslint/no-explicit-any */
 export interface TestCase {
   input: any[] // arguments to pass to the function

@@ -69,17 +69,13 @@ function StatCard({
         className={`absolute -top-12 -right-12 h-24 w-24 rounded-full opacity-20 blur-2xl ${glowColor}`}
       />
       <div className="relative">
-        <div className="flex items-center justify-between mb-3">
-          <span className="text-xs font-medium uppercase tracking-wider text-zinc-500">
+        <div className="mb-3 flex items-center justify-between">
+          <span className="text-xs font-medium tracking-wider text-zinc-500 uppercase">
             {label}
           </span>
           <Icon className={`h-[18px] w-[18px] ${accentColor}`} />
         </div>
-        <div
-          className={`text-3xl font-bold font-mono tracking-tight ${accentColor}`}
-        >
-          {value}
-        </div>
+        <div className={`font-mono text-3xl font-bold tracking-tight ${accentColor}`}>{value}</div>
         <p className="mt-1 text-xs text-zinc-500">{sublabel}</p>
       </div>
     </div>
@@ -91,18 +87,15 @@ function StatCard({
 // ---------------------------------------------------------------------------
 function StatsSkeleton() {
   return (
-    <div className="grid gap-4 grid-cols-2 lg:grid-cols-4">
+    <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
       {[1, 2, 3, 4].map((i) => (
-        <div
-          key={i}
-          className="rounded-xl border border-zinc-800/80 bg-zinc-900/60 p-5"
-        >
-          <div className="flex items-center justify-between mb-3">
-            <div className="h-3 w-12 rounded bg-zinc-800 animate-pulse" />
-            <div className="h-4 w-4 rounded bg-zinc-800 animate-pulse" />
+        <div key={i} className="rounded-xl border border-zinc-800/80 bg-zinc-900/60 p-5">
+          <div className="mb-3 flex items-center justify-between">
+            <div className="h-3 w-12 animate-pulse rounded bg-zinc-800" />
+            <div className="h-4 w-4 animate-pulse rounded bg-zinc-800" />
           </div>
-          <div className="h-8 w-20 rounded bg-zinc-800 animate-pulse" />
-          <div className="mt-2 h-3 w-24 rounded bg-zinc-800 animate-pulse" />
+          <div className="h-8 w-20 animate-pulse rounded bg-zinc-800" />
+          <div className="mt-2 h-3 w-24 animate-pulse rounded bg-zinc-800" />
         </div>
       ))}
     </div>
@@ -112,17 +105,17 @@ function StatsSkeleton() {
 function ContinueSkeleton() {
   return (
     <div className="rounded-xl border border-zinc-800/80 bg-zinc-900/60 p-6">
-      <div className="flex items-center gap-2 mb-4">
-        <div className="h-5 w-5 rounded bg-zinc-800 animate-pulse" />
-        <div className="h-5 w-40 rounded bg-zinc-800 animate-pulse" />
+      <div className="mb-4 flex items-center gap-2">
+        <div className="h-5 w-5 animate-pulse rounded bg-zinc-800" />
+        <div className="h-5 w-40 animate-pulse rounded bg-zinc-800" />
       </div>
       <div className="rounded-lg border border-zinc-800/50 bg-zinc-900/40 p-5">
-        <div className="h-5 w-48 rounded bg-zinc-800 animate-pulse mb-3" />
-        <div className="flex gap-2 mb-4">
-          <div className="h-5 w-16 rounded bg-zinc-800 animate-pulse" />
-          <div className="h-5 w-16 rounded bg-zinc-800 animate-pulse" />
+        <div className="mb-3 h-5 w-48 animate-pulse rounded bg-zinc-800" />
+        <div className="mb-4 flex gap-2">
+          <div className="h-5 w-16 animate-pulse rounded bg-zinc-800" />
+          <div className="h-5 w-16 animate-pulse rounded bg-zinc-800" />
         </div>
-        <div className="h-10 w-36 rounded-lg bg-zinc-800 animate-pulse" />
+        <div className="h-10 w-36 animate-pulse rounded-lg bg-zinc-800" />
       </div>
     </div>
   )
@@ -131,14 +124,14 @@ function ContinueSkeleton() {
 function ActivitySkeleton() {
   return (
     <div className="rounded-xl border border-zinc-800/80 bg-zinc-900/60 p-6">
-      <div className="h-5 w-36 rounded bg-zinc-800 animate-pulse mb-4" />
+      <div className="mb-4 h-5 w-36 animate-pulse rounded bg-zinc-800" />
       <div className="space-y-4">
         {[1, 2, 3].map((i) => (
           <div key={i} className="flex items-center gap-3">
-            <div className="h-8 w-8 rounded-full bg-zinc-800 animate-pulse" />
+            <div className="h-8 w-8 animate-pulse rounded-full bg-zinc-800" />
             <div className="flex-1 space-y-1.5">
-              <div className="h-3.5 w-48 rounded bg-zinc-800 animate-pulse" />
-              <div className="h-3 w-24 rounded bg-zinc-800 animate-pulse" />
+              <div className="h-3.5 w-48 animate-pulse rounded bg-zinc-800" />
+              <div className="h-3 w-24 animate-pulse rounded bg-zinc-800" />
             </div>
           </div>
         ))}
@@ -193,9 +186,7 @@ async function ChallengeDashboard() {
 
       prisma.challenge.count({ where: { isPublished: true } }),
 
-      userId
-        ? prisma.streak.findUnique({ where: { userId } })
-        : Promise.resolve(null),
+      userId ? prisma.streak.findUnique({ where: { userId } }) : Promise.resolve(null),
 
       (async () => {
         if (!userId) return null
@@ -209,9 +200,7 @@ async function ChallengeDashboard() {
         return prisma.challenge.findFirst({
           where: {
             isPublished: true,
-            ...(completedIds.length > 0
-              ? { id: { notIn: completedIds } }
-              : {}),
+            ...(completedIds.length > 0 ? { id: { notIn: completedIds } } : {}),
           },
           orderBy: [{ order: "asc" }],
           select: {
@@ -247,9 +236,7 @@ async function ChallengeDashboard() {
 
   const todayStr = new Date().toISOString().slice(0, 10)
   const completedToday = recentActivity.filter(
-    (a) =>
-      a.status === "completed" &&
-      a.updatedAt.toISOString().slice(0, 10) === todayStr
+    (a) => a.status === "completed" && a.updatedAt.toISOString().slice(0, 10) === todayStr
   ).length
   const dailyGoalProgress = Math.min(completedToday, 1)
   const dailyGoalPercent = dailyGoalProgress * 100
@@ -257,15 +244,14 @@ async function ChallengeDashboard() {
   if (!challengeDataAvailable) {
     return (
       <div className="flex flex-col items-center justify-center py-16 text-center">
-        <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-lime-500/10 border border-lime-500/20 mb-6">
+        <div className="mb-6 flex h-16 w-16 items-center justify-center rounded-2xl border border-lime-500/20 bg-lime-500/10">
           <Rocket className="h-8 w-8 text-lime-400" />
         </div>
-        <h2 className="text-xl font-bold text-zinc-200 mb-2">
+        <h2 className="mb-2 text-xl font-bold text-zinc-200">
           Set up your challenges to get started
         </h2>
-        <p className="text-sm text-zinc-500 max-w-md">
-          The challenge system is being configured. Run database migrations to
-          enable challenges.
+        <p className="max-w-md text-sm text-zinc-500">
+          The challenge system is being configured. Run database migrations to enable challenges.
         </p>
       </div>
     )
@@ -274,7 +260,7 @@ async function ChallengeDashboard() {
   return (
     <div className="space-y-6">
       {/* Stats Cards */}
-      <div className="grid gap-4 grid-cols-2 lg:grid-cols-4">
+      <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
         <StatCard
           icon={Zap}
           label="XP Earned"
@@ -303,30 +289,22 @@ async function ChallengeDashboard() {
           icon={Target}
           label="Daily Goal"
           value={`${completedToday}/1`}
-          sublabel={
-            dailyGoalProgress >= 1 ? "Goal reached!" : "Complete 1 today"
-          }
-          accentColor={
-            dailyGoalProgress >= 1 ? "text-lime-400" : "text-zinc-400"
-          }
+          sublabel={dailyGoalProgress >= 1 ? "Goal reached!" : "Complete 1 today"}
+          accentColor={dailyGoalProgress >= 1 ? "text-lime-400" : "text-zinc-400"}
           glowColor={dailyGoalProgress >= 1 ? "bg-lime-500" : "bg-zinc-600"}
         />
       </div>
 
       {/* Daily Goal Progress Bar */}
       <div className="rounded-xl border border-zinc-800/80 bg-zinc-900/60 p-5">
-        <div className="flex items-center justify-between mb-3">
+        <div className="mb-3 flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Target className="h-4 w-4 text-amber-400" />
-            <span className="text-sm font-medium text-zinc-300">
-              Daily Progress
-            </span>
+            <span className="text-sm font-medium text-zinc-300">Daily Progress</span>
           </div>
-          <span className="text-xs font-mono text-zinc-500">
-            {dailyGoalPercent}%
-          </span>
+          <span className="font-mono text-xs text-zinc-500">{dailyGoalPercent}%</span>
         </div>
-        <div className="h-2.5 w-full rounded-full bg-zinc-800 overflow-hidden">
+        <div className="h-2.5 w-full overflow-hidden rounded-full bg-zinc-800">
           <div
             className="h-full rounded-full transition-all duration-500 ease-out"
             style={{
@@ -342,20 +320,18 @@ async function ChallengeDashboard() {
 
       {/* Continue Learning */}
       <div className="rounded-xl border border-zinc-800/80 bg-zinc-900/60 p-6">
-        <div className="flex items-center gap-2 mb-4">
+        <div className="mb-4 flex items-center gap-2">
           <Rocket className="h-5 w-5 text-cyan-400" />
-          <h2 className="text-base font-bold uppercase tracking-wide text-zinc-300">
+          <h2 className="text-base font-bold tracking-wide text-zinc-300 uppercase">
             Continue Learning
           </h2>
         </div>
 
         {nextChallenge ? (
           <div className="rounded-lg border border-zinc-800/50 bg-zinc-950/60 p-5">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
               <div className="space-y-2">
-                <h3 className="text-lg font-bold text-zinc-100">
-                  {nextChallenge.title}
-                </h3>
+                <h3 className="text-lg font-bold text-zinc-100">{nextChallenge.title}</h3>
                 <div className="flex flex-wrap items-center gap-2">
                   <span
                     className={`inline-flex items-center rounded-md px-2 py-0.5 text-xs font-medium capitalize ${difficultyColor(
@@ -364,18 +340,18 @@ async function ChallengeDashboard() {
                   >
                     {nextChallenge.difficulty}
                   </span>
-                  <span className="inline-flex items-center gap-1 rounded-md bg-lime-500/10 border border-lime-500/20 px-2 py-0.5 text-xs font-mono font-medium text-lime-400">
+                  <span className="inline-flex items-center gap-1 rounded-md border border-lime-500/20 bg-lime-500/10 px-2 py-0.5 font-mono text-xs font-medium text-lime-400">
                     <Zap className="h-3 w-3" />
                     {nextChallenge.xpReward} XP
                   </span>
-                  <span className="inline-flex items-center rounded-md bg-zinc-800/60 border border-zinc-700/50 px-2 py-0.5 text-xs text-zinc-400 capitalize">
+                  <span className="inline-flex items-center rounded-md border border-zinc-700/50 bg-zinc-800/60 px-2 py-0.5 text-xs text-zinc-400 capitalize">
                     {nextChallenge.category}
                   </span>
                 </div>
               </div>
               <Link
                 href={`/challenges/${nextChallenge.id}`}
-                className="inline-flex items-center justify-center gap-2 rounded-lg bg-lime-500 px-6 py-3 text-sm font-bold text-zinc-950 shadow-lg shadow-lime-500/20 hover:bg-lime-400 transition-all hover:shadow-lime-500/30 whitespace-nowrap"
+                className="inline-flex items-center justify-center gap-2 rounded-lg bg-lime-500 px-6 py-3 text-sm font-bold whitespace-nowrap text-zinc-950 shadow-lg shadow-lime-500/20 transition-all hover:bg-lime-400 hover:shadow-lime-500/30"
               >
                 Start Challenge
                 <ArrowRight className="h-4 w-4" />
@@ -384,7 +360,7 @@ async function ChallengeDashboard() {
           </div>
         ) : (
           <div className="flex flex-col items-center justify-center py-8 text-center">
-            <CheckCircle2 className="h-10 w-10 text-lime-400 mb-3" />
+            <CheckCircle2 className="mb-3 h-10 w-10 text-lime-400" />
             <p className="text-sm text-zinc-400">
               {totalChallenges === 0
                 ? "No challenges available yet. Check back soon!"
@@ -396,24 +372,24 @@ async function ChallengeDashboard() {
 
       {/* Recent Activity */}
       <div className="rounded-xl border border-zinc-800/80 bg-zinc-900/60 p-6">
-        <div className="flex items-center gap-2 mb-4">
+        <div className="mb-4 flex items-center gap-2">
           <Clock className="h-[18px] w-[18px] text-zinc-500" />
-          <h2 className="text-base font-bold uppercase tracking-wide text-zinc-300">
+          <h2 className="text-base font-bold tracking-wide text-zinc-300 uppercase">
             Recent Activity
           </h2>
         </div>
 
         {recentActivity.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-8 text-center">
-            <div className="flex h-12 w-12 items-center justify-center rounded-full bg-zinc-800/60 mb-3">
+            <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-zinc-800/60">
               <Rocket className="h-6 w-6 text-zinc-600" />
             </div>
-            <p className="text-sm text-zinc-500 mb-3">
+            <p className="mb-3 text-sm text-zinc-500">
               No activity yet. Start your first challenge!
             </p>
             <Link
               href="/challenges"
-              className="inline-flex items-center gap-1.5 text-sm font-medium text-lime-400 hover:text-lime-300 transition-colors"
+              className="inline-flex items-center gap-1.5 text-sm font-medium text-lime-400 transition-colors hover:text-lime-300"
             >
               Browse Challenges
               <ArrowRight className="h-3.5 w-3.5" />
@@ -429,8 +405,8 @@ async function ChallengeDashboard() {
                 <div
                   className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full ${
                     entry.status === "completed"
-                      ? "bg-emerald-500/15 border border-emerald-500/30"
-                      : "bg-amber-500/15 border border-amber-500/30"
+                      ? "border border-emerald-500/30 bg-emerald-500/15"
+                      : "border border-amber-500/30 bg-amber-500/15"
                   }`}
                 >
                   {entry.status === "completed" ? (
@@ -447,20 +423,19 @@ async function ChallengeDashboard() {
                       &ldquo;{entry.challenge.title}&rdquo;
                     </span>
                     {entry.status === "completed" && (
-                      <span className="ml-1.5 text-lime-400 font-mono text-xs font-medium">
+                      <span className="ml-1.5 font-mono text-xs font-medium text-lime-400">
                         +{entry.xpEarned} XP
                       </span>
                     )}
                     {entry.status !== "completed" && entry.attempts > 0 && (
-                      <span className="ml-1.5 text-zinc-500 text-xs">
-                        ({entry.attempts}{" "}
-                        {entry.attempts === 1 ? "attempt" : "attempts"})
+                      <span className="ml-1.5 text-xs text-zinc-500">
+                        ({entry.attempts} {entry.attempts === 1 ? "attempt" : "attempts"})
                       </span>
                     )}
                   </p>
                 </div>
 
-                <span className="shrink-0 text-xs font-mono text-zinc-600">
+                <span className="shrink-0 font-mono text-xs text-zinc-600">
                   {timeAgo(new Date(entry.updatedAt))}
                 </span>
               </div>
@@ -468,7 +443,6 @@ async function ChallengeDashboard() {
           </div>
         )}
       </div>
-
     </div>
   )
 }
@@ -478,19 +452,15 @@ async function ChallengeDashboard() {
 // ---------------------------------------------------------------------------
 export default async function DashboardPage() {
   const session = await auth()
-  const userName =
-    session?.user?.name || session?.user?.email?.split("@")[0] || "there"
+  const userName = session?.user?.name || session?.user?.email?.split("@")[0] || "there"
 
   return (
     <div className="mx-auto max-w-7xl">
       <div className="mb-8">
         <h1 className="text-2xl font-bold text-zinc-100 sm:text-3xl">
-          Welcome back,{" "}
-          <span className="text-lime-400">{userName}</span>!
+          Welcome back, <span className="text-lime-400">{userName}</span>!
         </h1>
-        <p className="mt-1 text-sm text-zinc-500">
-          Here&apos;s your coding journey at a glance.
-        </p>
+        <p className="mt-1 text-sm text-zinc-500">Here&apos;s your coding journey at a glance.</p>
       </div>
 
       <Suspense

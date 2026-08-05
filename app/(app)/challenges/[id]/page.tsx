@@ -4,11 +4,7 @@ import { redirect, notFound } from "next/navigation"
 import type { Difficulty } from "@/lib/types"
 import ChallengeSolveClient from "./challenge-solve-client"
 
-export default async function ChallengeDetailPage({
-  params,
-}: {
-  params: Promise<{ id: string }>
-}) {
+export default async function ChallengeDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
   const session = await auth()
   if (!session?.user?.id) redirect("/login")

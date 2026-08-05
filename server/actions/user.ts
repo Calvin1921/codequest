@@ -1,10 +1,10 @@
-'use server'
+"use server"
 
-import { z } from 'zod'
-import { prisma } from '@/server/db'
-import { auth } from '@/lib/auth'
-import { withRateLimit } from '@/server/ratelimit'
-import { revalidatePath } from 'next/cache'
+import { z } from "zod"
+import { prisma } from "@/server/db"
+import { auth } from "@/lib/auth"
+import { withRateLimit } from "@/server/ratelimit"
+import { revalidatePath } from "next/cache"
 
 export type ProfileState = {
   message: string
@@ -17,9 +17,9 @@ export type ProfileState = {
 }
 
 const profileSchema = z.object({
-  name: z.string().min(2, 'Name must be at least 2 characters').optional(),
-  email: z.string().email('Invalid email address').optional(),
-  bio: z.string().max(500, 'Bio must be less than 500 characters').optional(),
+  name: z.string().min(2, "Name must be at least 2 characters").optional(),
+  email: z.string().email("Invalid email address").optional(),
+  bio: z.string().max(500, "Bio must be less than 500 characters").optional(),
 })
 
 export const updateProfile = withRateLimit(
@@ -29,21 +29,21 @@ export const updateProfile = withRateLimit(
 
       if (!session?.user?.id) {
         return {
-          message: 'You must be logged in to update your profile',
+          message: "You must be logged in to update your profile",
           errors: {},
         }
       }
 
       const validatedFields = profileSchema.safeParse({
-        name: formData.get('name') || undefined,
-        email: formData.get('email') || undefined,
-        bio: formData.get('bio') || undefined,
+        name: formData.get("name") || undefined,
+        email: formData.get("email") || undefined,
+        bio: formData.get("bio") || undefined,
       })
 
       if (!validatedFields.success) {
         return {
           errors: validatedFields.error.flatten().fieldErrors,
-          message: 'Invalid fields. Please check your input.',
+          message: "Invalid fields. Please check your input.",
         }
       }
 
@@ -53,7 +53,7 @@ export const updateProfile = withRateLimit(
 
       if (Object.keys(updateData).length === 0) {
         return {
-          message: 'No changes to save',
+          message: "No changes to save",
           errors: {},
         }
       }
@@ -63,22 +63,22 @@ export const updateProfile = withRateLimit(
         data: updateData,
       })
 
-      revalidatePath('/settings')
+      revalidatePath("/settings")
 
       return {
-        message: 'Profile updated successfully',
+        message: "Profile updated successfully",
         errors: {},
         success: true,
       }
     } catch (error) {
-      console.error('Profile update error:', error)
+      console.error("Profile update error:", error)
       return {
-        message: 'Failed to update profile. Please try again.',
+        message: "Failed to update profile. Please try again.",
         errors: {},
       }
     }
   },
-  'api'
+  "api"
 )
 
 export const deleteAccount = withRateLimit(
@@ -88,7 +88,7 @@ export const deleteAccount = withRateLimit(
 
       if (!session?.user?.id) {
         return {
-          message: 'You must be logged in to delete your account',
+          message: "You must be logged in to delete your account",
           errors: {},
         }
       }
@@ -98,17 +98,17 @@ export const deleteAccount = withRateLimit(
       })
 
       return {
-        message: 'Account deleted',
+        message: "Account deleted",
         errors: {},
         success: true,
       }
     } catch (error) {
-      console.error('Account deletion error:', error)
+      console.error("Account deletion error:", error)
       return {
-        message: 'Failed to delete account. Please try again.',
+        message: "Failed to delete account. Please try again.",
         errors: {},
       }
     }
   },
-  'auth'
+  "auth"
 )
