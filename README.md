@@ -231,10 +231,6 @@ Honest gaps, not marketing copy:
 - **No rate limiting on the code-execution endpoint.** Upstash-based rate limiting (`server/ratelimit.ts`) covers `auth` and `api`; `submitSolution` (the endpoint that actually runs user code) is not currently wired to a limiter, so it can be called repeatedly with no throttle.
 - **Unit test coverage is a gap.** See [Testing](#testing) — Vitest is configured but no unit test files exist yet; `verify:all` is the suite that currently exercises the app.
 
-## About This Project
-
-This repo started from a personal Next.js scaffold (`Initial source copy from nextjs-app`) and was built out feature-by-feature into CodeQuest by Calvin Ho, working with AI pair-programming assistance (commits are co-authored by Claude where AI-generated code was reviewed and accepted). It's original work, not an imported or forked project — the commit history in this repo is the actual build history.
-
 ## License
 
 MIT — see [LICENSE](./LICENSE).
