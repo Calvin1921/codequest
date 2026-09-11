@@ -73,7 +73,7 @@ export default function HomePage() {
         <div className="relative z-10 mx-auto max-w-4xl px-6 text-center">
           <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-[#84cc16]/20 bg-[#84cc16]/5 px-4 py-1.5 text-sm text-[#84cc16]">
             <Zap className="h-3.5 w-3.5" />
-            AI-powered interview prep for senior engineers
+            Coding practice with visible progress
           </div>
           <h1 className="mb-6 text-5xl leading-[1.1] font-extrabold tracking-tight md:text-7xl">
             Master Coding <span className="text-[#84cc16]">Interviews</span>
@@ -82,7 +82,7 @@ export default function HomePage() {
           </h1>
           <p className="mx-auto mb-10 max-w-2xl text-lg leading-relaxed text-zinc-400 md:text-xl">
             A gamified platform where senior engineers sharpen interview skills with real-world
-            challenges, instant AI feedback, and progression tracking that keeps you motivated.
+            challenges, instant test feedback, and progression tracking that keeps you motivated.
           </p>
           <div className="flex flex-col justify-center gap-4 sm:flex-row">
             <Button
@@ -111,8 +111,7 @@ export default function HomePage() {
       <section className="border-y border-white/5 bg-white/[0.02]">
         <div className="mx-auto max-w-4xl px-6 py-6 text-center">
           <p className="text-sm text-zinc-500 md:text-base">
-            Join <span className="font-semibold text-zinc-300">10,000+</span> engineers preparing
-            for FAANG interviews
+            Pick a challenge. Write a solution. See what passes and what to fix.
           </p>
         </div>
       </section>
@@ -121,11 +120,10 @@ export default function HomePage() {
       <section className="py-20 md:py-28">
         <div className="mx-auto max-w-6xl px-6">
           <h2 className="mb-4 text-center text-3xl font-bold md:text-4xl">
-            Everything you need to <span className="text-[#84cc16]">ace the interview</span>
+            Build a <span className="text-[#84cc16]">practice habit</span>
           </h2>
           <p className="mx-auto mb-14 max-w-xl text-center text-zinc-500">
-            Built by engineers, for engineers. Every feature designed to maximize your preparation
-            efficiency.
+            Keep the problem, your code, and test feedback together in one workspace.
           </p>
           <div className="grid gap-6 md:grid-cols-3">
             <div className="group relative rounded-xl border border-white/5 bg-white/[0.02] p-8 transition-all duration-300 hover:border-[#84cc16]/30 hover:bg-[#84cc16]/[0.03] hover:shadow-[0_0_30px_-10px_rgba(132,204,22,0.15)]">
@@ -134,8 +132,8 @@ export default function HomePage() {
               </div>
               <h3 className="mb-2 text-lg font-semibold">Live Coding Challenges</h3>
               <p className="text-sm leading-relaxed text-zinc-400">
-                Solve algorithms, data structures, and system design problems in a full-featured
-                Monaco editor with syntax highlighting and multi-language support.
+                Practice JavaScript functions and data structures in a Monaco editor with syntax
+                highlighting and starter code.
               </p>
             </div>
 
@@ -143,10 +141,10 @@ export default function HomePage() {
               <div className="mb-4 inline-flex items-center justify-center rounded-lg bg-[#22d3ee]/10 p-3">
                 <Bot className="h-6 w-6 text-[#22d3ee]" />
               </div>
-              <h3 className="mb-2 text-lg font-semibold">AI-Powered Feedback</h3>
+              <h3 className="mb-2 text-lg font-semibold">Test-Based Feedback</h3>
               <p className="text-sm leading-relaxed text-zinc-400">
-                Get detailed analysis on code quality, time complexity, edge cases, and alternative
-                approaches -- like having a senior engineer review every solution.
+                Compare expected and actual outputs, inspect errors, and reveal authored hints. AI
+                coaching is a future direction; it is not available in this version.
               </p>
             </div>
 
@@ -156,8 +154,8 @@ export default function HomePage() {
               </div>
               <h3 className="mb-2 text-lg font-semibold">Gamified Learning</h3>
               <p className="text-sm leading-relaxed text-zinc-400">
-                Earn XP for each challenge, maintain daily streaks, unlock achievements, and compete
-                on leaderboards to stay motivated throughout your prep.
+                Earn XP for completed challenges and track your daily progress and streaks on the
+                dashboard.
               </p>
             </div>
           </div>
@@ -180,8 +178,7 @@ export default function HomePage() {
               </div>
               <h3 className="mb-2 text-lg font-semibold">Pick a Challenge</h3>
               <p className="text-sm leading-relaxed text-zinc-500">
-                Choose from 200+ challenges across algorithms, data structures, system design, and
-                more.
+                Start with five sample challenges, from summing an array to building an LRU cache.
               </p>
             </div>
             <div className="text-center">
@@ -204,9 +201,10 @@ export default function HomePage() {
               <div className="mb-3 inline-flex items-center justify-center rounded-lg bg-white/5 p-2">
                 <MessageSquare className="h-5 w-5 text-zinc-400" />
               </div>
-              <h3 className="mb-2 text-lg font-semibold">Get AI Feedback</h3>
+              <h3 className="mb-2 text-lg font-semibold">Run Tests and Review</h3>
               <p className="text-sm leading-relaxed text-zinc-500">
-                Receive instant, detailed feedback on correctness, complexity, and code quality.
+                Run the fixed test cases, inspect failures, and save completion and XP when all
+                pass.
               </p>
             </div>
           </div>
@@ -218,16 +216,20 @@ export default function HomePage() {
         <div className="mx-auto max-w-4xl px-6">
           <div className="grid grid-cols-3 gap-8">
             <div className="text-center">
-              <div className="mb-2 text-4xl font-extrabold text-[#84cc16] md:text-5xl">200+</div>
-              <div className="text-sm tracking-wider text-zinc-500 uppercase">Challenges</div>
+              <div className="mb-2 text-4xl font-extrabold text-[#84cc16] md:text-5xl">5</div>
+              <div className="text-sm tracking-wider text-zinc-500 uppercase">
+                Sample challenges
+              </div>
             </div>
             <div className="text-center">
-              <div className="mb-2 text-4xl font-extrabold text-[#22d3ee] md:text-5xl">5</div>
-              <div className="text-sm tracking-wider text-zinc-500 uppercase">Categories</div>
+              <div className="mb-2 text-4xl font-extrabold text-[#22d3ee] md:text-5xl">JS</div>
+              <div className="text-sm tracking-wider text-zinc-500 uppercase">Execution</div>
             </div>
             <div className="text-center">
-              <div className="mb-2 text-4xl font-extrabold text-[#84cc16] md:text-5xl">AI</div>
-              <div className="text-sm tracking-wider text-zinc-500 uppercase">Powered Feedback</div>
+              <div className="mb-2 text-4xl font-extrabold text-[#84cc16] md:text-5xl">XP</div>
+              <div className="text-sm tracking-wider text-zinc-500 uppercase">
+                Progress tracking
+              </div>
             </div>
           </div>
         </div>
@@ -240,7 +242,7 @@ export default function HomePage() {
             Start Your Streak <span className="text-[#84cc16]">Today</span>
           </h2>
           <p className="mx-auto mb-10 max-w-lg text-zinc-500">
-            Every day counts. Build consistency, sharpen your skills, and land the role you deserve.
+            Complete a challenge, understand a failed case, and choose what to practice next.
           </p>
           <Button
             size="lg"

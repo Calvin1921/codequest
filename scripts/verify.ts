@@ -548,7 +548,7 @@ async function verifyAll() {
   }
 
   // 4. User registration works
-  const testEmail = `cli-test-${Date.now()}@verify.dev`
+  const testEmail = `cli-test-${Date.now()}@example.com`
   const testPassword = "VerifyPass123!"
   let testUser: { id: string } | null = null
   try {

@@ -16,7 +16,7 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "CodeQuest — Master Coding Interviews",
   description:
-    "A gamified interview preparation platform for senior engineers. Practice coding challenges, system design, and more with AI-powered feedback.",
+    "Practice JavaScript challenges, inspect test feedback, and track completed work, XP, and streaks in one workspace.",
 }
 
 export default function RootLayout({

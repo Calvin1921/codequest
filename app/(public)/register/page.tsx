@@ -97,7 +97,9 @@ export default function RegisterPage() {
           <p className="mb-4 text-2xl leading-relaxed font-light text-zinc-300">
             &ldquo;Your journey to FAANG starts here.&rdquo;
           </p>
-          <p className="text-sm text-zinc-600">200+ challenges. AI feedback. Real results.</p>
+          <p className="text-sm text-zinc-600">
+            Practice challenges. Test feedback. Saved progress.
+          </p>
           {/* Decorative progress */}
           <div className="mt-12 rounded-lg border border-white/5 bg-white/[0.02] p-5 text-left">
             <div className="mb-4 flex items-center gap-3">

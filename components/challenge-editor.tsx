@@ -74,7 +74,7 @@ export const ChallengeEditor = forwardRef<ChallengeEditorHandle, ChallengeEditor
             fontSize: 14,
             lineNumbers: "on",
             scrollBeyondLastLine: false,
-            automaticLayout: false,
+            automaticLayout: true,
             tabSize: 2,
             wordWrap: "on",
             padding: { top: 16 },
