@@ -1,6 +1,6 @@
-# CodeQuest demo — 80 seconds
+# Optional recording guide — 80 seconds
 
-Purpose: show a learner turning a concrete failure into a completed challenge. This is a **recording script and shot list**, not a claim that a finished video is included.
+The public project uses the [visual walkthrough](WALKTHROUGH.md) as its primary introduction. No video is included or required. This optional guide preserves a script for anyone who later wants to record the local flow.
 
 ## Prepare off camera
 

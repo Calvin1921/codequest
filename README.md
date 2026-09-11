@@ -1,46 +1,57 @@
-# CodeQuest — turn one practice session into visible progress
+# CodeQuest
 
-Coding practice can stall between choosing a problem, understanding a failed solution, and knowing what to do next. CodeQuest brings that loop into one workspace: **pick a challenge, write JavaScript, inspect test feedback, and save your progress.**
+**Practice a problem. Understand the failure. See your progress.**
 
-**Concrete demo:** fix an empty-array bug in “Sum of Array,” pass all four checks, then see one completed challenge and earned XP on the dashboard. Five seeded challenges make the local version easy to explore. This is a working product prototype; learning gains and user adoption have not been measured.
+CodeQuest brings a coding practice session into one workspace: choose a challenge, write JavaScript, inspect the failed cases, and save a successful solution. It explores a simple product idea: **feedback should make the next step obvious.**
+
+[Visual walkthrough](docs/WALKTHROUGH.md) · [Try locally](#try-locally) · [Engineering](docs/ENGINEERING.md) · [Contribute](CONTRIBUTING.md)
+
+![A real CodeQuest session: Sum of Array passes all four tests after correcting the empty-array case](public/screenshots/demo-success.png)
+
+_A working open-source prototype with five sample challenges. Screenshots use fictional data. Current feedback is test-based, with authored hints; no LLM integration is shipped._
+
+## Why build this?
+
+Practice involves more than writing a correct function. A learner needs to choose a manageable task, understand what went wrong, and return knowing where they left off.
+
+CodeQuest connects those steps:
+
+- **Choose with context:** each challenge includes a problem statement, difficulty, examples, and a time estimate.
+- **Learn from a concrete failure:** compare expected and actual output, reveal a hint, and rerun the solution.
+- **Make work visible:** completed challenges, XP, recent activity, and a next challenge appear on the dashboard.
+
+XP records activity; it is not a measure of mastery. Learning gains and adoption have not been measured.
+
+## The learning loop
 
 ```mermaid
 flowchart LR
-    A[Select a challenge] --> B[Write JavaScript]
+    A[Choose a challenge] --> B[Write JavaScript]
     B --> C[Run Tests]
-    C --> D[Inspect expected vs actual]
-    D -->|Fix and retry| B
-    D -->|All tests pass| E[Save completion + XP]
-    E --> F[See dashboard progress]
+    C --> D{All cases pass?}
+    D -->|No| E[Inspect failure / reveal hint]
+    E --> B
+    D -->|Yes| F[Save completion + XP]
+    F --> G[Continue from dashboard]
 ```
 
-**Run Tests also submits the solution** and records the attempt. Feedback comes from fixed tests; hints are authored content. **No LLM integration is shipped.**
+**Run Tests also submits the solution and records an attempt.** The current reward includes a bonus for fewer attempts; revising that incentive is on the [roadmap](docs/ROADMAP.md).
 
-[Try locally](#try-locally) · [80-second demo script](docs/DEMO.md) · [Engineering evidence](docs/ENGINEERING.md)
+<table>
+<tr>
+<td width="33%"><strong>1. Choose</strong><br>A small task with a clear goal.<br><a href="public/screenshots/demo-challenges.png"><img src="public/screenshots/demo-challenges.png" alt="Five JavaScript challenges with descriptions and difficulty levels" width="360"></a></td>
+<td width="33%"><strong>2. Understand</strong><br>Find the case your code misses.<br><a href="public/screenshots/demo-failure.png"><img src="public/screenshots/demo-failure.png" alt="An empty-array case fails while the other three tests pass" width="360"></a></td>
+<td width="33%"><strong>3. Continue</strong><br>See completed work and the next task.<br><a href="public/screenshots/demo-progress.png"><img src="public/screenshots/demo-progress.png" alt="Demo Learner dashboard with one completed challenge and the next challenge" width="360"></a></td>
+</tr>
+</table>
 
-![CodeQuest: a corrected Sum of Array solution passing all four tests and earning 80 XP](public/screenshots/demo-success.png)
+[Follow the full-size, annotated walkthrough →](docs/WALKTHROUGH.md)
 
-[See the failed case and saved dashboard progress](docs/DEMO.md#verified-walkthrough)
-
-## What the product demonstrates
-
-- **A complete learning loop:** problem statement, editor, hints, execution, actionable failures, and persistent progress.
-- **Server-owned state:** authenticated submissions and database-backed completion/XP updates, with explicit consistency gaps below.
-- **Product judgment:** deterministic correctness checks today, with a clear boundary for possible AI coaching later.
-
-## Current capabilities and AI boundary
-
-| Available today                                        | Future direction — not implemented                                       |
-| ------------------------------------------------------ | ------------------------------------------------------------------------ |
-| JavaScript execution against seeded test cases         | LLM-generated explanations or coaching                                   |
-| Expected/actual output, runtime errors, authored hints | Complexity analysis, code-quality review, adaptive hints                 |
-| Saved attempts, completion, XP, streaks                | Evaluated AI feedback with cost, latency, privacy, and fallback controls |
-
-An AI coach could explain a failed case, while the test runner remains responsible for pass/fail and rewards. That is a proposed design, not a claim about the current app.
+Start with **Sum of Array** to see the entire loop. Explore **LRU Cache** for a deeper example of class-based execution and stateful behavior.
 
 ## Try locally
 
-Use **Node.js 22 LTS** and npm in a fresh checkout. No model API key, OAuth account, or cloud database is needed.
+Use **Node.js 22 LTS** and npm in a fresh checkout. No model API key, OAuth account, Redis service, or cloud database is needed.
 
 ```bash
 git clone https://github.com/Calvin1921/codequest.git
@@ -50,44 +61,37 @@ npm run demo:setup
 npm run dev -- --hostname 127.0.0.1
 ```
 
-Open [localhost:3000/register](http://localhost:3000/register). Create **Demo Learner** with `learner@example.com` and a disposable password of your choice. Start with **Sum of Array**. Follow the [demo walkthrough](docs/DEMO.md) for the exact failing and passing solutions.
+Open [localhost:3000/register](http://localhost:3000/register). Create **Demo Learner**, using `learner@example.com` and a disposable password you choose. Open **Sum of Array** and follow the [two sample solutions](docs/WALKTHROUGH.md#try-the-same-example).
 
-The setup creates a random local auth secret and a new SQLite demo database. It refuses to overwrite an environment file or existing demo database. For an existing checkout, alternate ports, and setup recovery, see [local setup details](docs/LOCAL_DEMO.md).
+Setup generates a local auth secret and a new SQLite demo database. It refuses to overwrite existing environments or demo data. [Setup details and troubleshooting](docs/LOCAL_DEMO.md).
 
-**Local, trusted-code demonstration only.** Submitted code runs in the application process; this runner is unsuitable for a public untrusted-code service. See [Node’s VM documentation](https://nodejs.org/api/vm.html#vm-executing-javascript).
+**Run locally with trusted code only.** The current executor shares the app's process and is not suitable for a public untrusted-code service. Publishing the source does not make the runner safe to expose online.
 
-## Engineering evidence
+## Under the hood
 
-| Concern             | Implemented evidence                                                                                                                                 | Scope / limit                                                                    |
-| ------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------- |
-| Authentication      | [Auth.js credentials, bcrypt, optional OAuth](lib/auth.ts); [submission session check](server/actions/progress.ts)                                   | OAuth needs provider configuration; login throttling is not wired                |
-| Transactional state | [Completion and XP in one Prisma transaction](server/actions/progress.ts); [unique user/challenge key](prisma/schema.prisma)                         | Streak updates happen separately; failed retries can reopen completed work       |
-| Failure handling    | [Compilation/runtime/timeout results](lib/code-executor.ts); [client submission error state](<app/(app)/challenges/[id]/challenge-solve-client.tsx>) | VM timeouts are not resource isolation                                           |
-| Rate limiting       | [Optional Upstash wrapper](server/ratelimit.ts) used by [registration](server/actions/auth.ts) and [profile/account actions](server/actions/user.ts) | Skipped without Redis; submissions are not throttled                             |
-| Testing             | [CLI verification](scripts/verify.ts), [auth E2E](e2e/auth.spec.ts), [CI configuration](.github/workflows/ci.yml)                                    | CLI bypasses sessions and duplicates some logic; Vitest has no unit tests        |
-| Accessibility       | [Axe scans, form labels, keyboard smoke checks](e2e/accessibility.spec.ts)                                                                           | Three public-page scans currently fail; not a full editor or screen-reader audit |
-| Browser controls    | [CSP, framing restrictions, HSTS, permission headers](next.config.ts)                                                                                | CSP still allows inline/eval scripts; headers do not secure the runner           |
+| Product behavior                                | Implementation to inspect                                                                                                            |
+| ----------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------ |
+| Submissions belong to the signed-in learner     | [Auth.js credentials and optional OAuth](lib/auth.ts), [server session check](server/actions/progress.ts)                            |
+| Failed cases produce usable feedback            | [Compilation, runtime, timeout, and output comparison](lib/code-executor.ts)                                                         |
+| Completion and XP are stored together           | [Prisma transaction](server/actions/progress.ts), [database relationships](prisma/schema.prisma)                                     |
+| Requests and UI failures have explicit handling | [Optional rate-limit wrapper](server/ratelimit.ts), [submission error state](<app/(app)/challenges/[id]/challenge-solve-client.tsx>) |
+| Behavior can be inspected and checked           | [CLI verification](scripts/verify.ts), [auth E2E](e2e/auth.spec.ts), [accessibility checks](e2e/accessibility.spec.ts)               |
 
-[Read the architecture, test boundaries, and follow-up priorities →](docs/ENGINEERING.md)
+Next.js App Router · React · TypeScript · Monaco · Auth.js · Prisma/SQLite · Tailwind CSS · optional Upstash Redis
 
-## Known limitations
+[Architecture, tradeoffs, test results, and coverage boundaries →](docs/ENGINEERING.md)
 
-- **Execution:** Node `vm` contexts share the host process; no process/container isolation or memory cap. Five-second timeouts apply to individual VM runs, not the whole request. Execution has no rate limiter.
-- **Progress consistency:** a failed retry can move completed work back to `in_progress`, allowing a later pass to award XP again. Streak writes sit outside the XP transaction. Concurrency and retry guarantees need dedicated action-level tests.
-- **Scope:** five seed challenges; JavaScript execution only. No shipped AI coach, multi-language runner, or measured learning outcomes.
-- **Validation:** no Vitest unit cases; three public-page accessibility scans currently fail, and the existing browser suite does not cover the full solve flow or editor accessibility. SQLite is the configured database; PostgreSQL requires schema and migration work.
+## Current boundaries
 
-## Inspect and verify
+- **Execution:** Node `vm` provides contexts within the server process, not process/container isolation. There is no memory cap or execution rate limiter. [Node's VM guidance](https://nodejs.org/api/vm.html#vm-executing-javascript).
+- **Progress and UX:** a failed retry can reopen completed work and allow another XP award; streak updates happen outside the XP transaction. The editor can still show “Unsaved” after success, and unsubmitted drafts are not retained.
+- **Validation:** 13/13 CLI checks passed in local verification; Chromium had 6 passes and 3 public-page accessibility failures. Vitest has no unit cases. These results do not establish full accessibility or production readiness.
+- **Scope:** five seeded JavaScript challenges, fixed tests, authored hints. AI coaching and multi-language execution are future directions. Rate limiting is optional and only wired to selected account actions.
 
-```bash
-npm run typecheck
-npm run lint
-npm run verify:all
-npm run test:unit
-npx playwright install chromium
-npm run test:e2e -- --project=chromium
-```
+The [roadmap](docs/ROADMAP.md) prioritizes reliable progress, clearer feedback, and safer execution before expanding features.
 
-Run verification only against disposable local data. `test:unit` currently succeeds with **zero tests**, not unit coverage. See [engineering notes](docs/ENGINEERING.md#testing) for what each check proves.
+## Contributing
 
-Built with Next.js App Router, React, TypeScript, Monaco, Auth.js, Prisma/SQLite, Tailwind CSS, and optional Upstash Redis. [MIT license](LICENSE).
+Start with [CONTRIBUTING.md](CONTRIBUTING.md) for setup, meaningful checks, and how to describe a reproducible issue. Small improvements to feedback, recovery, tests, and accessibility are useful contributions.
+
+[MIT license](LICENSE).

@@ -60,7 +60,7 @@ Directories are rooted at `app/`, `components/`, `lib/`, `server/`, and `prisma/
 
 The keyboard test compares focused element tag names; it is not a complete focus-order assertion. Automated axe scans cover landing/login/register, not the authenticated editor, resizing, celebration dialog, or a full screen-reader journey. No broad accessibility certification is claimed.
 
-## Validation of this change
+## Recorded local validation
 
 - Fresh demo setup succeeded, and rerunning it refused existing data.
 - TypeScript passed; ESLint had zero errors and three existing unused-variable warnings.
@@ -76,8 +76,9 @@ The keyboard test compares focused element tag names; it is not a complete focus
 3. **Before expanding AI claims:** implement a coach separately from correctness/reward decisions; evaluate explanations against known failures, handle unavailable models, and define consent, retention, latency, and cost limits. No model SDK or live coaching call is present today.
 4. **Before claiming broad production readiness:** cover the solve journey and editor accessibility, wire meaningful action tests into CI, exercise configured rate-limit failures, and validate deployment/auth configuration. Sentry variables were removed from the example because no integration is wired up.
 
-## Documentation audit decisions
+## Continue exploring
 
-The previous README put badges and seven screenshots ahead of the user outcome; its architecture tree included absent directories. It also advertised AI feedback, described VM contexts as process isolation, suggested PostgreSQL readiness, and overstated test/rate-limit scope. The revised README makes the practice loop visible first and links each engineering claim to its implementation.
-
-Landing copy and metadata now match the same boundary. Unsupported user-count, 200+ challenge, leaderboard, multi-language, and AI-review claims were removed. Old screenshots were replaced with a verified local walkthrough. The tracked development database was removed; the setup recreates fictional data. This changes the current tree, not historical commits. The demo uses only fictional accounts and seeded problems; no employer, hiring process, personal account, or private source material is needed.
+- [Visual product walkthrough](WALKTHROUGH.md)
+- [Prioritized roadmap](ROADMAP.md)
+- [Local setup](LOCAL_DEMO.md)
+- [Contributing](../CONTRIBUTING.md)
