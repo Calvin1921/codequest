@@ -19,7 +19,8 @@
     "db:seed": "tsx prisma/seed.ts",
     "db:studio": "prisma studio",
     "verify": "npx tsx scripts/verify.ts",
-    "verify:all": "npx tsx scripts/verify.ts verify:all"
+    "verify:all": "npx tsx scripts/verify.ts verify:all",
+    "demo:setup": "node scripts/demo-setup.mjs"
   },
   "prisma": {
     "seed": "tsx prisma/seed.ts"
